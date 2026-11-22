@@ -1,149 +1,38 @@
 # Final Spoken Script — *Is it really that great to be young?*
 
-> **Cible** : `6m30 – 6m55` (~860 mots parlés + pauses) · **12 slides** · Rythme naturel (~130 mots/min).  
-> Chaque transition est écrite mot pour mot : lis d'une traite, respire aux repères `[...]`.
+> **Durée cible** : `~7m20 – 7m45` (fenêtre `5–8 min`, rythme naturel ~145 mots/min + pauses) · **Lecture continue du début à la fin**.  
+> **Légende discrète** : `*(→ S2)*` = slide suivante · `*(clic)*` = déclencher le beat sur la même slide.
+
+Hey everyone. Have you noticed that every time you talk to an adult—at a family dinner, at work, pretty much anywhere—they tell you the exact same thing? *"Enjoy your youth—these are the best years of your life!"* They say it with dreamy nostalgia, like being twenty is an all-inclusive vacation with zero stress. *(pause 2s · clic)* Wait... are they really? Is it actually that great to be young? Today, I want to explore that question from two angles: first, why being young right now can feel heavy; and second, how incredible youth can—and should—be.
+
+*(→ S2)* Because before we talk about the magic, let's be honest about where the weight starts. For me, it started early. Back in middle school, I was simply that kid who was... too young. Not just younger on paper—completely out of sync with everyone around me. *(voix plus douce · clic)* Picture walking into the courtyard every morning while groups are already laughing, trading inside jokes, moving as if everyone secretly received the same social handbook except you. And you? Zero friends. Standing at the edge of the yard, pretending to organize your backpack for the third time so nobody notices you're alone while you wait for the bell.
+
+*(→ S3 · clic)* That's the part adults forget when they romanticize our age: when you're young, you don't have emotional armor yet. You haven't built the thick skin that comes at thirty or forty; everything hits you without a filter. So at twelve, feeling left out doesn't feel like a minor awkward phase—it feels like the entire universe just locked its doors, because that tiny schoolyard *is* your entire universe. And the funny thing is, you survive middle school, find your people, and tell yourself, *"Okay, I made it through the hard part—now it gets easier."*
+
+*(→ S4 · se redresser)* Except you lift your head at twenty, and you realize the pressure never vanished—it just grew up with you. *(clic → 38%)* Ours is a *"too early"* generation, pushed into adult mode while childhood is still stuck loading. Just look around this room right now: almost all of us are *alternants*—work-study students. Half the week, we answer managers and hit real company deadlines; the other half, we fight through exams for a degree. *(clic → 07:02 / 07:03 / 07:04)* And let's be honest: for some of us, alternance was a smart option among others to get a head start. For plenty of others, it wasn't a choice at all—it was the only way to pay tuition, cover rent, and survive. You wake up at seven, scroll through three global crises before breakfast, juggle a job and a degree just to stay afloat, and still smile and say, *"This is fine."*
+
+*(→ S5)* And as if carrying our own schedules and tuition weren't enough, look at the world waiting right outside this classroom. *(clic → The bill.)* Honestly, it feels like sitting down at a restaurant just as the previous guests finish a massive feast and walk out the door—and the waiter turns straight to us and drops the receipt on our table. *(clic → FIX IT.)* Climate crisis, inflation, housing out of reach, broken systems... We're expected to clean up every mess our predecessors left behind, while building our own future on shaky ground. We didn't even order—yet the bill is sitting right in front of us.
+
+*(→ S6 · piano silence)* So when you put it all together—growing up without armor, working just to pay for school before catching your breath, and inheriting a world you didn't break—why would anyone want to be young? *(silence 3s · 2 pas de côté)* And yet... stop for a second. *(clic → Unwritten pages. · accord doré)* If being young is really that brutal, why would every billionaire on earth trade every penny they own just to stand in our shoes again? Because despite all the chaos, being young really *is* the big deal. We hold the one currency money can never buy back: time, and unwritten pages.
+
+*(→ S7 · sourire · clic → Plot Development.)* Don't get me wrong—the alternance hustle is still waiting tomorrow morning, and the pressure is real. *But* nothing in our lives is carved in stone yet. Being young means you still have permission to have fun without guilt, even in a serious world. At forty-five, a wrong turn comes with a mortgage and heavy stakes. At twenty? You can try something bold, start a crazy project, fall off the skateboard, laugh in the dust, and get back up. Right now is the only chapter where falling down isn't called failing—it's called learning. Every awkward phase, every late-night detour—it's all just plot development.
+
+*(→ S8)* And because nothing is permanent yet, those unwritten pages let us figure out three things that truly matter. *(clic → 01)* First: discovering *what* to love. Not just what looks clean on a work-study résumé or pays the rent—I mean the art, the ideas, the weird midnight obsessions that make you forget to check your phone or the clock because, for once, you're not just surviving a schedule—you feel genuinely alive.
+
+*(→ S9)* Once you start finding what lights you up, you start discovering *who* you're meant to share it with. *(clic → 02)* Second: learning *how* to love. Remember that lonely kid pretending to organize his backpack in the courtyard? Youth is also the season where you finally find your people—classmates and friends sitting right here, surviving the exact same grind, laughing through the same exhaustion. It's where you learn to drop your guard, show up for each other, and care without holding back.
+
+*(→ S10)* Knowing what you love and who matters is half the story—living it is the rest. *(clic → 03)* Third: choosing to live on your own terms instead of running on autopilot—commute, work, class, sleep, repeat. Taking the risk while the door is still wide open, so you never look back thirty years from now wishing you had been a little braver.
+
+*(→ S11)* So yes—even with the rough beginnings, the alternance hustle, the deadlines, and the bill we never ordered—being young really is the big deal. *(clic → Short enough to regret.)* But like every great deal in life, it comes with an expiration date. Youth is long enough to let you enjoy it, mess up, explore, and fall in love with the world... yet short enough to leave you with deep regrets if you spend it waiting for *"later."*
+
+*(→ S12 · retour au centre)* So before the next company deadline hits, before another exam week swallows your calendar, before another semester flies by—don't just sprint toward graduation waiting for real life to start. Real life is already happening. Take a real break from the noise. Open a notebook and write a list—not a to-do list for your manager or professors, a youth list: the small scary things to try, the places to see, the late nights with friends you refuse to miss. Manage to get through that list... *(clic → …and just be happy.)* ...and just be happy. *(silence 1.5s · regard public)* Thank you.
 
 ---
 
-## 01 — The Hook · `0:00 → 0:45`
-Every time you talk to an adult, they tell you the exact same thing: *"Enjoy your youth—these are the best years of your life!"* They say it with so much nostalgia, like being young is an all-inclusive vacation.
-
-`[PAUSE 2s · CLIC → slash "Really?"]`
-
-Wait... are they really? Is it actually that great to be young?
-
-Today, I want to look at this question from two different angles: first, why carrying your twenties right now can feel heavy; and second, how incredible being young could—and should—be.
-
----
-
-## 02 — Act I.A · Out of Sync · `0:45 → 1:30`
-Because before we talk about the magic, let's be honest about where the weight starts.
-
-For me, it started early. Back in middle school, I was that kid who was simply... too young. Not just on my birth certificate—out of sync with everyone around me.
-
-`[VOIX PLUS DOUCE · CLIC → Out of sync.]`
-
-Picture standing alone at the edge of the courtyard while groups are already laughing, trading inside jokes, moving as if everyone secretly got the same social handbook except you. And you? Zero friends. Just pretending to organize your backpack so nobody sees you standing alone.
-
----
-
-## 03 — Act I.A · No Armor Yet · `1:30 → 2:00`
-`[CLIC → No armor yet.]`
-
-That's the part adults forget when they romanticize our age: when you're young, you don't have emotional armor yet. You haven't built the thick skin that comes later.
-
-So at twelve, feeling left out doesn't feel like a small passing phase. It feels like the whole universe just locked its doors—because that tiny schoolyard IS your entire universe.
-
-And just when you finally survive middle school, find your people, and think, *"Okay, now it gets easier..."*
-
----
-
-## 04 — Act I.B · Too Early & Alternance · `2:00 → 2:45`
-`[SE REDRESSER · TON PLUS AFFIRMÉ]`
-
-...you lift your head, and you realize the pressure didn't vanish. It just grew up with you.
-
-`[CLIC → 38% INTERRUPTED]`
-
-Ours is a *"too early"* generation. Look around this room: nearly all of us are *alternants*—work-study students—juggling real company deadlines and a degree at twenty just to pay for school.
-
-`[CLIC → 07:02 / Job & degree / "This is fine."]`
-
-For some of us, choosing alternance was a smart option among many. For others—let's be honest—it wasn't even a choice. It was the only way to afford school. The only way to survive. You wake up at seven, grab your coffee, and scroll through three global crises before breakfast, building a career before catching your breath.
-
----
-
-## 05 — Act I.B · The Bill · `2:45 → 3:20`
-And on top of our own schedules and tuition, look at the world waiting outside the classroom.
-
-`[CLIC → The bill.]`
-
-Honestly, it feels like sitting down at a restaurant right as the previous guests walk out the door—and the waiter turns around and hands US the receipt.
-
-`[CLIC → FIX IT.]`
-
-Climate crisis, inflation, broken systems... We are expected to clean up every single mess our predecessors left behind, while somehow building our own future from scratch on shaky ground. We didn't even order—and yet, the bill is sitting on our table.
-
----
-
-## 06 — Act II · The Pivot · `3:20 → 3:50`
-So when you're working before you're ready, carrying a world you didn't break, and still figuring yourself out—why would anyone want to be young?
-
-`[PIANO : silence · SILENCE 3s · 2 PAS DE CÔTÉ]`
-
-And yet... pause for a second.
-
-`[CLIC → Unwritten pages. · PIANO : accord doré]`
-
-If being young is really that heavy, why would every billionaire on earth trade every penny they own just to stand in our shoes? Because being young IS the big deal. We hold the one thing money can never buy back: unwritten pages.
-
----
-
-## 07 — Act III.A · Plot Development · `3:50 → 4:35`
-`[SOURIRE · GESTES OUVERTS · CLIC → Plot Development.]`
-
-Yes, the alternance hustle is real, and the pressure is heavy—but nothing is carved in stone yet.
-
-Being young means you still have the right to have fun without guilt, even in a serious world. At forty-five, a wrong turn comes with a mortgage and heavy stakes. At twenty? You can try something bold, fall off the skateboard, laugh in the dust, and nobody calls it failing. You get to call it learning. Every awkward phase, every late-night detour—it's all just plot development.
-
----
-
-## 08 — Act III.B · 01 What to Love · `4:35 → 5:00`
-And because nothing is permanent yet, those unwritten pages let you answer three things that actually matter.
-
-`[CLIC → 01 What to love.]`
-
-First: figuring out *what* to love. Not just what pays the rent or looks impressive on a work-study résumé—I mean the ideas, the art, the weird midnight curiosities that make you forget to check the clock because you feel genuinely alive.
-
----
-
-## 09 — Act III.B · 02 How to Love · `5:00 → 5:25`
-Once you start finding what lights you up, you start discovering *who* you're supposed to share it with.
-
-`[CLIC → 02 How to love.]`
-
-Second: learning *how* to love. Remember that lonely kid standing by himself in the courtyard? Youth is also the season where you finally find your people—classmates, friends surviving the exact same grind—and learn how to care deeply, show up, and be present without holding back.
-
----
-
-## 10 — Act III.B · 03 Zero Regrets · `5:25 → 5:45`
-Knowing what you love and who matters is half the battle—living it is the rest.
-
-`[CLIC → 03 Zero regrets.]`
-
-Third: choosing how to live on your own terms, instead of running on autopilot between work and class. Taking the risk while the door is still wide open, so you won't look back one day wishing you had been braver.
-
----
-
-## 11 — Finale · The Paradox · `5:45 → 6:10`
-So yes—even with the deadlines, the alternance hustle, and the bills—being young really is the big deal.
-
-`[CLIC → Short enough to regret.]`
-
-But like every great deal in life, it comes with an expiration date. It's long enough to let you enjoy it, explore, and fall in love with the world... yet short enough to leave you with deep regrets if you waste it waiting for later.
-
----
-
-## 12 — Finale · Your Youth List · `6:10 → 6:40`
-`[RETOUR AU CENTRE]`
-
-So before the next deadline hits, before another semester flies by—don't just rush to graduation.
-
-Take a real break from the noise. Write a list—not a to-do list for your company or your exams, a life list: the small scary things to try, the nights with friends you refuse to miss. Manage to get through it...
-
-`[CLIC → …and just be happy.]`
-
-...and just be happy.
-
-`[SILENCE 1.5s · REGARD PUBLIC]`
-
-Thank you.
-
----
-
-### Repères Chrono Jour J
-- `0:45` → Entrée dans **Acte I (Collège)**
-- `2:00` → Passage au **Macro (*Too early* & Alternance)**
-- `3:20` → **Le Pivot** (silence 3s + 2 pas de côté)
-- `4:35` → **Les 3 Piliers** (`What to love · How to love · Zero regrets`)
-- `5:45` → **Paradoxe & Liste finale**
+### Repères Chrono Jour J (Cible 7m30)
+- `0:45` → Entrée dans **Acte I (Collège)** (`→ S2`)
+- `2:10` → Passage au **Macro (*Too early* & Alternance)** (`→ S4`)
+- `3:45` → **Le Pivot** (`→ S6` · silence 3s + 2 pas de côté)
+- `5:10` → **Les 3 Piliers** (`What to love · How to love · Zero regrets`, `→ S8`)
+- `6:35` → **Paradoxe & Youth List** (`→ S11` / `→ S12`)
+- `7:30` → **Mot de fin** (*"...and just be happy. Thank you."*)

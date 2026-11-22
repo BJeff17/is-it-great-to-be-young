@@ -43,7 +43,7 @@ export const PresenterConsoleView: React.FC = () => {
   const diff = state.timerSeconds - active.targetEndSec;
 
   let paceClass = 'ok';
-  let paceLabel = 'Prêt · Cible 06:30';
+  let paceLabel = `Prêt · Cible ${formatTime(SLIDES[SLIDES.length - 1].targetEndSec)}`;
   if (state.timerSeconds > 0) {
     if (Math.abs(diff) <= 15) {
       paceClass = 'ok';

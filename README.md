@@ -1,6 +1,6 @@
 # Is It Really That Great To Be Young? — Cinema Presentation Studio
 
-Application **React + TypeScript + Vite** modulaire conçue pour présenter un talk de **6m40** en **12 slides cinéma sans cards**, avec un score audio adaptatif sans clics (piano feutré + nappe chaude), un **Studio Pro (4 onglets)** et une **télécommande mobile en temps réel via QR Code** (compatible **Wi-Fi local** et **Vercel 4G/5G**).
+Application **React + TypeScript + Vite** modulaire conçue pour présenter un talk de **7m30** en **12 slides cinéma sans cards**, avec un score audio adaptatif sans clics (piano feutré + nappe chaude), un **Studio Pro (4 onglets)** et une **télécommande mobile en temps réel via QR Code** (compatible **Wi-Fi local** et **Vercel 4G/5G**).
 
 ---
 
@@ -41,6 +41,6 @@ Le fichier [vercel.json](./vercel.json) configure automatiquement Vite, pnpm et 
 
 ## Scripts & Documentation
 
-- [script_final.md](./script_final.md) — Script final complet mot pour mot avec toutes les transitions (~860 mots, ~6m40)
+- [script_final.md](./script_final.md) — Script final continu d'une seule traite (1 110 mots, ~7m30)
 - [script.md](./script.md) — Document maître complet (timing, clics, intentions vocales, musique)
 - [slides_blueprint.md](./slides_blueprint.md) — Blueprint artistique des 12 slides et 4 arcs chromatiques

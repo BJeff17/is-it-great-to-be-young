@@ -53,7 +53,7 @@ export const MobileRemoteView: React.FC = () => {
   const diff = stageState.timerSeconds - slide.targetEndSec;
   const paceText =
     stageState.timerSeconds === 0
-      ? 'Prêt · 06:40'
+      ? `Prêt · ${formatTime(SLIDES[SLIDES.length - 1].targetEndSec)}`
       : Math.abs(diff) <= 15
         ? `Dans le tempo (${formatTime(slide.targetEndSec)})`
         : diff > 0
