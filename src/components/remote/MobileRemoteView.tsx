@@ -38,7 +38,7 @@ export const MobileRemoteView: React.FC = () => {
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const wheelLockRef = useRef(0);
 
-  const { connected, peers, sendCommand } = usePresentationSync({
+  const { connected, transport, peers, sendCommand } = usePresentationSync({
     session,
     role: 'remote',
     onState: (incoming) => setStageState(incoming),
@@ -53,7 +53,7 @@ export const MobileRemoteView: React.FC = () => {
   const diff = stageState.timerSeconds - slide.targetEndSec;
   const paceText =
     stageState.timerSeconds === 0
-      ? 'Prêt · 06:30'
+      ? 'Prêt · 06:40'
       : Math.abs(diff) <= 15
         ? `Dans le tempo (${formatTime(slide.targetEndSec)})`
         : diff > 0
@@ -68,6 +68,12 @@ export const MobileRemoteView: React.FC = () => {
     fireCmd({ action: 'scrollDelta', direction: e.deltaY > 0 ? 'next' : 'prev' });
   };
 
+  const connLabel = connected
+    ? transport === 'cloud-p2p'
+      ? `P2P Live · ${peers.stages} écran`
+      : `LAN Live · ${peers.stages} écran`
+    : 'Connexion...';
+
   return (
     <div className="remote-shell">
       <header className="remote-header">
@@ -80,9 +86,7 @@ export const MobileRemoteView: React.FC = () => {
                 boxShadow: connected ? '0 0 8px #10b981' : '0 0 8px #f59e0b',
               }}
             />
-            <span>
-              {connected ? `Connecté · ${peers.stages} écran` : 'Connexion...'}
-            </span>
+            <span>{connLabel}</span>
           </div>
           <div style={{ fontSize: 13, color: '#f8fafc', fontWeight: 600, marginTop: 3 }}>
             Slide {pad2(stageState.slide + 1)}/{pad2(stageState.totalSlides)} · Beat {stageState.beat}/
@@ -176,7 +180,7 @@ export const MobileRemoteView: React.FC = () => {
                 className={`remote-pill-btn ${stageState.audio.muted ? 'active' : ''}`}
                 onClick={() => fireCmd({ action: 'mute' })}
               >
-                {stageState.audio.muted ? 'Reprendre Piano' : 'Mute Piano (M)'}
+                {stageState.audio.muted ? 'Reprendre Audio' : 'Mute Audio (M)'}
               </button>
               <button
                 className={`remote-pill-btn ${stageState.audio.ducked ? 'active' : ''}`}

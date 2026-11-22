@@ -4,6 +4,10 @@ export type KenBurnsSpeed = 'slow' | 'medium' | 'still';
 
 export type StudioTab = 'direction' | 'fine' | 'audio' | 'remote';
 
+export type SoundMode = 'cinema' | 'solo' | 'soft';
+
+export type SyncTransport = 'lan-ws' | 'cloud-p2p' | 'local';
+
 export interface SlideFineControl {
   textScale: number;      // 0.85 to 1.25 (default 1.0)
   scrimOpacity: number;   // 0.4 to 1.6 (default 1.0)
@@ -25,6 +29,7 @@ export interface DeckConfig {
   goldenDust: boolean;
   hud: boolean;
   music: boolean;
+  soundMode: SoundMode;
   musicVolume: number;      // 0 to 1 (default 0.28)
   reverbWet: number;        // 0 to 1 (default 0.68)
   curtainOnPresent: boolean;

@@ -115,7 +115,7 @@ export const SlideRenderer: React.FC = () => {
                   </div>
                   <div className="s4-line">
                     <span className="time">07:03</span>
-                    <span>Pick your entire future</span>
+                    <span>Job &amp; degree just to stay afloat</span>
                   </div>
                   <div className="s4-line meme-line">
                     <span className="time">07:04</span>

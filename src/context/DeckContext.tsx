@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { CinemaPianoEngine } from '../audio/CinemaPianoEngine';
 import { DEFAULT_CONFIG, DEFAULT_FINE_CONTROL, SLIDES } from '../data/slides';
-import { usePresentationSync } from '../sync/usePresentationSync';
+import { isLocalOrLanHost, usePresentationSync } from '../sync/usePresentationSync';
 import type {
   AudioStatus,
   DeckConfig,
@@ -19,9 +19,35 @@ import type {
   SlideData,
   SlideFineControl,
   StudioTab,
+  SyncTransport,
 } from '../types/presentation';
 
-const STORAGE_KEY = 'jeff_youth_deck_react_v1';
+const STORAGE_KEY = 'jeff_youth_deck_react_v2';
+const SESSION_STORAGE_KEY = 'jeff_youth_session_id';
+
+function randomRoomCode(): string {
+  const chars = 'abcdefghjkmnpqrstuvwxyz23456789';
+  let out = '';
+  for (let i = 0; i < 6; i++) {
+    out += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return out;
+}
+
+function resolveInitialSession(params: URLSearchParams): string {
+  const fromUrl = params.get('session');
+  if (fromUrl) return fromUrl;
+  if (isLocalOrLanHost(window.location.hostname)) return 'live';
+  try {
+    const cached = sessionStorage.getItem(SESSION_STORAGE_KEY);
+    if (cached) return cached;
+    const fresh = randomRoomCode();
+    sessionStorage.setItem(SESSION_STORAGE_KEY, fresh);
+    return fresh;
+  } catch {
+    return randomRoomCode();
+  }
+}
 
 interface DeckContextValue {
   slides: SlideData[];
@@ -38,12 +64,16 @@ interface DeckContextValue {
   config: DeckConfig;
   audioState: AudioStatus;
   sessionId: string;
+  isPublicHost: boolean;
   networkInfo: NetworkInfo;
   wsConnected: boolean;
+  syncTransport: SyncTransport;
   peers: PeerCounts;
   getEffectiveFine: (slideIndex: number) => SlideFineControl;
   setStudioOpen: (open: boolean) => void;
   setStudioTab: (tab: StudioTab) => void;
+  regenerateSession: () => void;
+  previewAudio: () => void;
   nextStep: () => void;
   prevStep: () => void;
   goToSlide: (slideIndex: number, beat?: number) => void;
@@ -82,7 +112,9 @@ function loadStoredConfig(): DeckConfig {
 export const DeckProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const params = useMemo(() => new URLSearchParams(window.location.search), []);
   const isInstantMode = params.get('instant') === '1';
-  const sessionId = params.get('session') ?? 'live';
+  const isPublicHost = !isLocalOrLanHost(window.location.hostname);
+
+  const [sessionId, setSessionId] = useState<string>(() => resolveInitialSession(params));
 
   const [config, setConfig] = useState<DeckConfig>(() => {
     const base = loadStoredConfig();
@@ -148,21 +180,25 @@ export const DeckProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  // Fetch host LAN IP for QR generation
+  // Fetch host LAN IP ONLY on local/LAN servers (skip on Vercel static hosting)
   useEffect(() => {
+    if (isPublicHost) return;
     fetch('/api/network')
-      .then((r) => (r.ok ? r.json() : null))
+      .then((r) => {
+        const ct = r.headers.get('content-type') ?? '';
+        if (!r.ok || !ct.includes('application/json')) return null;
+        return r.json();
+      })
       .then((data: NetworkInfo | null) => {
         if (data && data.lanIp) {
           setNetworkInfo(data);
         }
       })
       .catch(() => {
-        // offline or static build fallback already set
+        // fallback already set
       });
-  }, []);
+  }, [isPublicHost]);
 
-  // Persist config
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
@@ -171,24 +207,23 @@ export const DeckProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [config]);
 
-  // Sync audio engine settings & slide arc
   useEffect(() => {
     const engine = pianoRef.current;
     if (!engine) return;
     engine.setSettings({
       enabled: config.music,
+      soundMode: config.soundMode,
       volume: config.musicVolume,
       reverbWet: config.reverbWet,
       blackout: isBlackout,
       curtainOpen: isCurtainOpen,
     });
-  }, [config.music, config.musicVolume, config.reverbWet, isBlackout, isCurtainOpen]);
+  }, [config.music, config.soundMode, config.musicVolume, config.reverbWet, isBlackout, isCurtainOpen]);
 
   useEffect(() => {
     pianoRef.current?.onSlideChange(currentSlide, currentBeat);
   }, [currentSlide, currentBeat]);
 
-  // Timer tick
   useEffect(() => {
     if (!timerRunning) return;
     const id = window.setInterval(() => {
@@ -197,7 +232,6 @@ export const DeckProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => clearInterval(id);
   }, [timerRunning]);
 
-  // Fullscreen listener
   useEffect(() => {
     const onFs = () => setIsPresenting(Boolean(document.fullscreenElement));
     document.addEventListener('fullscreenchange', onFs);
@@ -212,6 +246,20 @@ export const DeckProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isBlackout,
   });
   stateRef.current = { currentSlide, currentBeat, isTransitioning, isCurtainOpen, isBlackout };
+
+  const regenerateSession = useCallback(() => {
+    const nextCode = randomRoomCode();
+    try {
+      sessionStorage.setItem(SESSION_STORAGE_KEY, nextCode);
+    } catch {
+      // ignore
+    }
+    setSessionId(nextCode);
+  }, []);
+
+  const previewAudio = useCallback(() => {
+    pianoRef.current?.playPreviewChord();
+  }, []);
 
   const resetTimer = useCallback(() => {
     setTimerRunning(false);
@@ -254,9 +302,7 @@ export const DeckProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const startImmersivePresentation = useCallback(() => {
     setStudioOpen(false);
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen?.().catch(() => {
-        // ignore if blocked outside user gesture
-      });
+      document.documentElement.requestFullscreen?.().catch(() => {});
     }
     if (config.curtainOnPresent) {
       setIsCurtainOpen(true);
@@ -374,7 +420,6 @@ export const DeckProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [config.globalFine, config.slideOverrides]
   );
 
-  // Sync stage state & incoming commands ONLY when mounted as stage view
   const pathname = window.location.pathname;
   const isStageRoute = !pathname.startsWith('/remote') && !pathname.startsWith('/presenter');
 
@@ -426,7 +471,12 @@ export const DeckProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [isStageRoute, nextStep, prevStep, goToSlide, toggleMute, toggleDuck, toggleBlackout, liftCurtain, resetTimer, updateConfig]
   );
 
-  const { connected: wsConnected, peers, sendState } = usePresentationSync({
+  const {
+    connected: wsConnected,
+    transport: syncTransport,
+    peers,
+    sendState,
+  } = usePresentationSync({
     session: sessionId,
     role: 'stage',
     onCommand: isStageRoute ? handleIncomingCommand : undefined,
@@ -481,12 +531,16 @@ export const DeckProvider: React.FC<{ children: React.ReactNode }> = ({ children
     config,
     audioState,
     sessionId,
+    isPublicHost,
     networkInfo,
     wsConnected,
+    syncTransport,
     peers,
     getEffectiveFine,
     setStudioOpen,
     setStudioTab,
+    regenerateSession,
+    previewAudio,
     nextStep,
     prevStep,
     goToSlide,

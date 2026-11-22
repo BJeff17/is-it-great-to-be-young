@@ -1,18 +1,45 @@
 import React from 'react';
-import { Volume2, VolumeX } from 'lucide-react';
+import { Play, Volume2, VolumeX } from 'lucide-react';
 import { useDeck } from '../../context/DeckContext';
+import type { SoundMode } from '../../types/presentation';
+
+const SOUND_MODES: Array<{ id: SoundMode; label: string }> = [
+  { id: 'cinema', label: 'Cinéma Mix' },
+  { id: 'solo', label: 'Piano Pur' },
+  { id: 'soft', label: 'Ultra-Doux' },
+];
 
 export const TabAudio: React.FC = () => {
-  const { slides, currentSlide, config, audioState, updateConfig, toggleMute, toggleDuck } =
-    useDeck();
+  const {
+    slides,
+    currentSlide,
+    config,
+    audioState,
+    updateConfig,
+    toggleMute,
+    toggleDuck,
+    previewAudio,
+  } = useDeck();
   const active = slides[currentSlide];
 
   return (
     <>
       <div>
-        <div className="studio-section-title">Partition Piano Feutré</div>
+        <div className="studio-section-title">Ambiance Sonore (Zéro-Clic)</div>
+        <div className="seg-group" style={{ marginBottom: 10 }}>
+          {SOUND_MODES.map((m) => (
+            <button
+              key={m.id}
+              className={`seg-btn ${config.soundMode === m.id ? 'active' : ''}`}
+              onClick={() => updateConfig({ soundMode: m.id })}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+
         <label className="toggle-row">
-          <span>Activer le Piano Adaptatif</span>
+          <span>Activer la Musique Adaptative</span>
           <input
             type="checkbox"
             checked={config.music}
@@ -45,19 +72,25 @@ export const TabAudio: React.FC = () => {
 
       <div>
         <div className="studio-section-title">Contrôle Scène Live</div>
-        <div className="btn-pair">
-          <button
-            className={`secondary-btn ${audioState.muted ? 'active' : ''}`}
-            onClick={toggleMute}
-          >
-            {audioState.muted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-            <span>{audioState.muted ? 'Reprendre (M)' : 'Mute doux (M)'}</span>
-          </button>
-          <button
-            className={`secondary-btn ${audioState.ducked ? 'active' : ''}`}
-            onClick={toggleDuck}
-          >
-            <span>Voice Duck 35% (D)</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div className="btn-pair">
+            <button
+              className={`secondary-btn ${audioState.muted ? 'active' : ''}`}
+              onClick={toggleMute}
+            >
+              {audioState.muted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+              <span>{audioState.muted ? 'Reprendre (M)' : 'Mute doux (M)'}</span>
+            </button>
+            <button
+              className={`secondary-btn ${audioState.ducked ? 'active' : ''}`}
+              onClick={toggleDuck}
+            >
+              <span>Voice Duck 35% (D)</span>
+            </button>
+          </div>
+          <button className="secondary-btn" onClick={previewAudio}>
+            <Play size={14} />
+            <span>Tester le son (Accord Fmaj9)</span>
           </button>
         </div>
       </div>
@@ -68,13 +101,13 @@ export const TabAudio: React.FC = () => {
           {active.pianoArcLabel}
         </div>
         <div style={{ fontSize: '0.73rem', color: '#94a3b8', marginTop: 6, lineHeight: 1.45 }}>
-          La musique suit automatiquement tes 4 arcs : silence pur à l’entrée du Pivot (Slide 06),
-          éclosion d’un accord Fmaj9 sur <em>Unwritten pages</em>, puis résolution Golden Hour.
+          Score évolutif : ouverture Satie, valse Hisaishi (02–03), pulse Einaudi sur l’alternance
+          (04–05), silence complet au Pivot (06), puis thème Golden Hour chantant.
         </div>
       </div>
 
       <div>
-        <div className="studio-section-title">Comportement Entrée en Scène</div>
+        <div className="studio-section-title">Entrée en Scène</div>
         <label className="toggle-row">
           <span>Rideau Cinéma au lancement (P)</span>
           <input
