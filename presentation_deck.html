@@ -1,0 +1,2728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Is It Really That Great To Be Young? — Cinema Deck & Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #040406;
+      --fg: #f8fafc;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Space Mono', ui-monospace, monospace;
+      --font-hand: 'Caveat', cursive;
+      --ease-cinema: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
+      --safe-y: 10vh;
+      --safe-x: 7.5vw;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #040406;
+      color: var(--fg);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      user-select: none;
+    }
+
+    body.instant-mode,
+    body.instant-mode *,
+    body.instant-mode *::before,
+    body.instant-mode *::after {
+      transition: none !important;
+      animation: none !important;
+    }
+
+    body.cursor-hidden,
+    body.cursor-hidden * {
+      cursor: none !important;
+    }
+
+    /* ==================== STAGE ==================== */
+    #app {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #040406;
+    }
+
+    /* 35mm Film Grain */
+    .film-grain {
+      position: fixed;
+      inset: -15%;
+      z-index: 65;
+      pointer-events: none;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grainShift 0.9s steps(4) infinite;
+      transition: opacity 0.4s ease;
+    }
+    body.no-grain .film-grain { opacity: 0; }
+
+    @keyframes grainShift {
+      0% { transform: translate(0, 0); }
+      25% { transform: translate(-1.5%, 1%); }
+      50% { transform: translate(1%, -1.5%); }
+      75% { transform: translate(-1%, -0.5%); }
+      100% { transform: translate(0, 0); }
+    }
+
+    /* Cinema 2.39:1 Letterbox Bars */
+    .letterbox {
+      position: fixed;
+      left: 0;
+      right: 0;
+      height: 0;
+      background: #020203;
+      z-index: 55;
+      pointer-events: none;
+      transition: height 0.75s var(--ease-cinema);
+    }
+    .letterbox.top { top: 0; }
+    .letterbox.bottom { bottom: 0; }
+    body.letterbox-on .letterbox { height: 6vh; }
+
+    /* ==================== 3 ARTISTIC DIRECTIONS ==================== */
+    body[data-theme="cinema"] {
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Inter', sans-serif;
+    }
+
+    /* A24 Editorial Gallery Frame */
+    body[data-theme="a24"] {
+      --font-display: 'Instrument Serif', 'Playfair Display', Georgia, serif;
+      --font-sans: 'Inter', sans-serif;
+      --safe-y: 11.5vh;
+      --safe-x: 9vw;
+    }
+    body[data-theme="a24"] #app { background: #060608; }
+    body[data-theme="a24"] .slide-frame {
+      inset: 6.8vh 5.5vw;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 36px 100px rgba(0, 0, 0, 0.85);
+    }
+    body[data-theme="a24"] .a24-meta {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    body[data-theme="a24"] .slide-bg-img {
+      filter: contrast(1.08) saturate(0.92);
+    }
+
+    /* Zine / Collage Modern */
+    body[data-theme="zine"] {
+      --font-display: 'Syne', 'Inter', sans-serif;
+      --font-sans: 'Inter', sans-serif;
+      --safe-y: 10.5vh;
+      --safe-x: 8.5vw;
+    }
+    body[data-theme="zine"] #app {
+      background: radial-gradient(circle at 50% 50%, #141318 0%, #08080b 100%);
+    }
+    body[data-theme="zine"] .slide-frame {
+      inset: 4.6vh 4.6vw;
+      border-radius: 3px;
+      border: 1.5px solid rgba(255, 255, 255, 0.16);
+      transform: rotate(-0.45deg);
+      box-shadow: 16px 20px 0 rgba(0, 0, 0, 0.55);
+    }
+    body[data-theme="zine"] .zine-halftone { opacity: 0.11; }
+    body[data-theme="zine"] .zine-tape { opacity: 1; }
+    body[data-theme="zine"] .zine-only {
+      opacity: 0.9;
+      transform: rotate(var(--rot, -3deg)) scale(1);
+    }
+
+    /* Halftone overlay */
+    .zine-halftone {
+      position: fixed;
+      inset: 0;
+      z-index: 48;
+      pointer-events: none;
+      opacity: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.35) 1px, transparent 1px);
+      background-size: 7px 7px;
+      mix-blend-mode: overlay;
+      transition: opacity 0.5s ease;
+    }
+
+    /* A24 Editorial Metadata */
+    .a24-meta {
+      position: fixed;
+      z-index: 60;
+      pointer-events: none;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(248, 250, 252, 0.48);
+      opacity: 0;
+      transition: opacity 0.6s var(--ease-cinema), transform 0.6s var(--ease-cinema);
+    }
+    .a24-meta.tl { top: 2.4vh; left: 5.5vw; transform: translateY(-5px); }
+    .a24-meta.tr { top: 2.4vh; right: 136px; transform: translateY(-5px); }
+    .a24-meta.bl { bottom: 2.4vh; left: 5.5vw; transform: translateY(5px); }
+    .a24-meta.br { bottom: 2.4vh; right: 5.5vw; transform: translateY(5px); }
+    body.presenting .a24-meta.tr { right: 5.5vw; }
+
+    /* Zine Masking Tape */
+    .zine-tape {
+      position: absolute;
+      width: 88px;
+      height: 22px;
+      background: rgba(254, 243, 199, 0.2);
+      backdrop-filter: blur(2px);
+      border-left: 1px dashed rgba(255, 255, 255, 0.18);
+      border-right: 1px dashed rgba(255, 255, 255, 0.18);
+      z-index: 25;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+    .zine-tape.tl { top: -8px; left: 26px; transform: rotate(-12deg); }
+    .zine-tape.br { bottom: -8px; right: 28px; transform: rotate(-9deg); }
+
+    .zine-only {
+      opacity: 0;
+      transform: rotate(var(--rot, -3deg)) scale(0.92);
+      transition: opacity 0.6s var(--ease-cinema), transform 0.6s var(--ease-cinema);
+      pointer-events: none;
+    }
+
+    body.no-memes .meme-ref {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transform: translateY(8px) scale(0.96) !important;
+    }
+
+    /* ==================== SLIDES ENGINE (ZERO GHOSTING) ==================== */
+    .slides-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.85s var(--ease-cinema), visibility 0s linear 0.85s;
+      overflow: hidden;
+    }
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      z-index: 10;
+      transition: opacity 0.85s var(--ease-cinema), visibility 0s linear 0s;
+    }
+
+    .slide-frame {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #040406;
+      transition: inset 0.8s var(--ease-cinema), transform 0.8s var(--ease-cinema), border-color 0.6s ease;
+    }
+
+    .slide-bg-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.015);
+      transition: transform 16s ease-out, filter 0.7s ease;
+    }
+    .slide.active .slide-bg-img {
+      transform: scale(1.07);
+    }
+    body.no-motion .slide-bg-img,
+    body.no-motion .slide.active .slide-bg-img,
+    body.instant-mode .slide-bg-img,
+    body.instant-mode .slide.active .slide-bg-img {
+      transform: scale(1.01) !important;
+      transition: filter 0.5s ease;
+    }
+
+    .vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .slide-content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      padding: var(--safe-y) var(--safe-x);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* Beat animation system */
+    .beat {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.85s var(--ease-cinema), transform 0.85s var(--ease-cinema);
+      will-change: opacity, transform;
+    }
+    .beat.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: clamp(0.65rem, 0.85vw, 0.76rem);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(248, 250, 252, 0.48);
+    }
+
+    @keyframes softPulse {
+      0%, 100% { opacity: 0.72; transform: scale(0.94); }
+      50% { opacity: 1; transform: scale(1.16); }
+    }
+
+    /* ==================== SLIDE 01: THE HOOK ==================== */
+    .s1-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 68% 58% at 50% 48%, rgba(30, 28, 42, 0.72) 0%, rgba(8, 8, 12, 0.96) 62%, #040406 100%);
+    }
+    .s1-ambient-glow {
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      width: 56vw;
+      height: 32vh;
+      transform: translate(-50%, -50%) scale(0.85);
+      background: radial-gradient(ellipse at center, rgba(244, 63, 94, 0.16) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 1.1s var(--ease-cinema), transform 1.1s var(--ease-cinema);
+      pointer-events: none;
+    }
+    .s1-ambient-glow.lit {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+    .s1-center {
+      align-items: center;
+      text-align: center;
+    }
+    .s1-eyebrow {
+      margin-bottom: clamp(1rem, 2.2vh, 1.8rem);
+      letter-spacing: 0.34em;
+      color: rgba(248, 250, 252, 0.36);
+    }
+    .s1-quote-wrap {
+      position: relative;
+      display: inline-block;
+      max-width: min(88vw, 1020px);
+      padding: 0.2em 0.35em;
+    }
+    .s1-quote {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5.8vw, 5.4rem);
+      font-weight: 400;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: #f8fafc;
+      transition: opacity 0.8s var(--ease-cinema), filter 0.8s var(--ease-cinema), transform 0.8s var(--ease-cinema);
+    }
+    .s1-quote em { font-style: italic; font-weight: 400; }
+    .s1-quote.crossed {
+      opacity: 0.28;
+      filter: blur(0.8px);
+      transform: scale(0.985);
+    }
+    .s1-slash {
+      position: absolute;
+      left: -4%;
+      top: 50%;
+      width: 108%;
+      height: 110px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      overflow: visible;
+    }
+    .s1-slash path {
+      stroke: #f43f5e;
+      stroke-width: 7.5;
+      stroke-linecap: round;
+      fill: none;
+      stroke-dasharray: 1500;
+      stroke-dashoffset: 1500;
+      transition: stroke-dashoffset 0.8s var(--ease-snap);
+      filter: drop-shadow(0 0 22px rgba(244, 63, 94, 0.72));
+    }
+    .s1-slash.drawn path { stroke-dashoffset: 0; }
+    .s1-response {
+      margin-top: clamp(1.2rem, 3vh, 2.4rem);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.9rem;
+    }
+    .s1-really {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(2.2rem, 4.4vw, 4.1rem);
+      font-weight: 400;
+      color: #fda4af;
+      letter-spacing: 0.01em;
+      text-shadow: 0 0 42px rgba(244, 63, 94, 0.32);
+    }
+    .s1-rule {
+      width: 48px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(244, 63, 94, 0.75), transparent);
+    }
+    .s1-sub {
+      font-family: var(--font-mono);
+      font-size: clamp(0.68rem, 0.95vw, 0.82rem);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(248, 250, 252, 0.48);
+    }
+
+    /* ==================== SLIDE 02: SOLITUDE (BREATHE) ==================== */
+    .s2-vignette {
+      background:
+        linear-gradient(180deg, rgba(6, 10, 22, 0.72) 0%, rgba(6, 10, 22, 0.14) 38%, rgba(6, 10, 22, 0.08) 72%, rgba(6, 10, 22, 0.48) 100%),
+        linear-gradient(90deg, rgba(6, 10, 22, 0.38) 0%, transparent 35%, transparent 75%, rgba(6, 10, 22, 0.28) 100%);
+    }
+    .s2-layout {
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding-top: clamp(9.5vh, 12vh, 14vh);
+    }
+    .s2-dot-row {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-bottom: 0.8rem;
+    }
+    .s2-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #38bdf8;
+      box-shadow: 0 0 18px 4px rgba(56, 189, 248, 0.75);
+      animation: softPulse 3.8s ease-in-out infinite;
+    }
+    .s2-tag {
+      font-family: var(--font-mono);
+      font-size: clamp(0.64rem, 0.84vw, 0.75rem);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(186, 230, 253, 0.78);
+    }
+    .s2-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 4.8vw, 4.4rem);
+      font-weight: 400;
+      line-height: 1.04;
+      color: #f0f9ff;
+      letter-spacing: -0.02em;
+      text-shadow: 0 12px 38px rgba(0, 0, 0, 0.65);
+    }
+
+    /* ==================== SLIDE 03: NO ARMOR YET ==================== */
+    .s3-vignette {
+      background: linear-gradient(90deg, rgba(6, 10, 20, 0.84) 0%, rgba(6, 10, 20, 0.48) 40%, rgba(6, 10, 20, 0.08) 62%, transparent 100%);
+    }
+    .s3-layout {
+      align-items: flex-start;
+    }
+    .s3-hairline-block {
+      max-width: min(40vw, 520px);
+      border-left: 1.5px solid rgba(56, 189, 248, 0.58);
+      padding-left: 24px;
+    }
+    .s3-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 4.6vw, 4.2rem);
+      font-weight: 400;
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+      color: #f0f9ff;
+      text-shadow: 0 10px 34px rgba(0, 0, 0, 0.6);
+    }
+    .s3-whisper {
+      margin-top: 1rem;
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(1.05rem, 1.55vw, 1.42rem);
+      line-height: 1.45;
+      color: rgba(186, 230, 253, 0.72);
+    }
+
+    /* ==================== SLIDE 04: TOO EARLY (BORDERLESS TYPOGRAPHY) ==================== */
+    .s4-vignette {
+      background: linear-gradient(90deg, rgba(7, 11, 22, 0.88) 0%, rgba(7, 11, 22, 0.62) 38%, rgba(7, 11, 22, 0.08) 62%, transparent 100%);
+    }
+    .s4-layout {
+      align-items: flex-start;
+    }
+    .s4-inner {
+      max-width: min(39vw, 480px);
+    }
+    .s4-os-whisper {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      color: rgba(186, 230, 253, 0.74);
+      margin-bottom: 1rem;
+    }
+    .s4-os-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ef4444;
+      box-shadow: 0 0 10px #ef4444;
+    }
+    .s4-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 5vw, 4.6rem);
+      font-weight: 400;
+      line-height: 1.02;
+      letter-spacing: -0.02em;
+      color: #f8fafc;
+      margin-bottom: 1.7rem;
+    }
+    .s4-loader {
+      width: min(360px, 36vw);
+      margin-bottom: 2rem;
+    }
+    .s4-loader-meta {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.16em;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+    .s4-loader-meta .err { color: #f87171; }
+    .s4-bar-track {
+      height: 3px;
+      background: rgba(148, 163, 184, 0.2);
+      overflow: hidden;
+    }
+    .s4-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #38bdf8 0%, #ef4444 100%);
+      transition: width 1.15s var(--ease-cinema);
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.55);
+    }
+    .beat.revealed .s4-bar-fill { width: 38%; }
+
+    .s4-whispers {
+      border-left: 1px solid rgba(56, 189, 248, 0.28);
+      padding-left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+    .s4-line {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      font-size: clamp(0.84rem, 1.05vw, 0.96rem);
+      color: rgba(226, 232, 240, 0.84);
+    }
+    .s4-line .time {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      color: rgba(148, 163, 184, 0.65);
+      flex-shrink: 0;
+    }
+    .s4-line.meme-line span:last-child {
+      font-family: var(--font-display);
+      font-style: italic;
+      color: #fda4af;
+      font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+    }
+
+    /* ==================== SLIDE 05: THE BILL (BORDERLESS EDITORIAL) ==================== */
+    .s5-vignette {
+      background: linear-gradient(90deg, rgba(6, 9, 16, 0.88) 0%, rgba(6, 9, 16, 0.55) 42%, rgba(6, 9, 16, 0.08) 68%, transparent 100%);
+    }
+    .s5-layout {
+      align-items: flex-start;
+    }
+    .s5-ledger {
+      width: min(360px, 36vw);
+    }
+    .s5-eyebrow {
+      color: rgba(148, 163, 184, 0.72);
+      margin-bottom: 0.65rem;
+    }
+    .s5-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 4.9vw, 4.5rem);
+      font-weight: 400;
+      line-height: 1.02;
+      letter-spacing: -0.02em;
+      color: #f8fafc;
+      margin-bottom: 1.6rem;
+    }
+    .s5-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 9px 0;
+      font-family: var(--font-mono);
+      font-size: clamp(0.72rem, 0.92vw, 0.82rem);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(226, 232, 240, 0.85);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+    }
+    .s5-row .dim { color: rgba(148, 163, 184, 0.62); }
+    .s5-total {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(244, 63, 94, 0.52);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--font-mono);
+    }
+    .s5-total .label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      color: rgba(248, 250, 252, 0.72);
+    }
+    .s5-total .val {
+      font-size: clamp(1.1rem, 1.55vw, 1.42rem);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #fb7185;
+      text-shadow: 0 0 24px rgba(244, 63, 94, 0.35);
+    }
+    .s5-note {
+      margin-top: 14px;
+      font-family: var(--font-hand);
+      font-size: clamp(1.4rem, 2vw, 1.75rem);
+      color: rgba(253, 164, 175, 0.86);
+      transform: rotate(-1.5deg);
+      display: inline-block;
+    }
+
+    /* ==================== SLIDE 06: THE PIVOT (SILENCE) ==================== */
+    .s6-bg {
+      position: absolute;
+      inset: 0;
+      background: #030304;
+    }
+    #ember-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .s6-center {
+      align-items: center;
+      text-align: center;
+    }
+    .spark-stage {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      display: grid;
+      place-items: center;
+    }
+    .spark-halo {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.42) 0%, rgba(245, 158, 11, 0.08) 46%, transparent 72%);
+      animation: emberBreathe 4.4s ease-in-out infinite;
+      transition: transform 1.6s var(--ease-cinema), opacity 1.6s ease;
+    }
+    .spark-halo.expanded {
+      transform: scale(3.8);
+      opacity: 0.9;
+    }
+    .spark-core {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #fffbeb;
+      box-shadow: 0 0 18px 5px rgba(251, 191, 36, 0.95), 0 0 64px 16px rgba(245, 158, 11, 0.55);
+      animation: corePulse 4.4s ease-in-out infinite;
+    }
+    .s6-whisper {
+      margin-top: 2.4rem;
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(1.9rem, 3.6vw, 3.2rem);
+      font-weight: 400;
+      color: #fde68a;
+      letter-spacing: 0.02em;
+      text-shadow: 0 0 42px rgba(245, 158, 11, 0.42);
+    }
+    @keyframes emberBreathe {
+      0%, 100% { transform: scale(0.9); opacity: 0.68; }
+      50% { transform: scale(1.18); opacity: 1; }
+    }
+    @keyframes corePulse {
+      0%, 100% { transform: scale(0.92); }
+      50% { transform: scale(1.22); }
+    }
+
+    /* ==================== SLIDE 07: PLOT DEVELOPMENT ==================== */
+    .s7-bg-img {
+      filter: contrast(1.04) saturate(1.04) sepia(0.06);
+    }
+    .s7-vignette {
+      background:
+        radial-gradient(ellipse 55% 48% at 18% 22%, rgba(255, 248, 232, 0.36) 0%, transparent 72%),
+        linear-gradient(180deg, rgba(255, 247, 230, 0.12) 0%, transparent 45%, rgba(28, 14, 4, 0.22) 100%);
+    }
+    .s7-layout {
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding-top: clamp(9vh, 12vh, 14vh);
+    }
+    .s7-failure-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 0.45rem;
+    }
+    .s7-failure {
+      font-family: var(--font-mono);
+      font-size: clamp(1rem, 1.8vw, 1.5rem);
+      letter-spacing: 0.28em;
+      color: rgba(67, 20, 7, 0.72);
+      transition: opacity 0.65s ease;
+    }
+    .s7-failure.struck { opacity: 0.36; }
+    .s7-gold-line {
+      position: absolute;
+      left: -6%;
+      top: 50%;
+      width: 112%;
+      height: 4px;
+      background: linear-gradient(90deg, #ea580c, #d97706);
+      border-radius: 4px;
+      transform: scaleX(0) rotate(-3deg);
+      transform-origin: left center;
+      transition: transform 0.65s var(--ease-snap);
+      box-shadow: 0 2px 12px rgba(234, 88, 12, 0.45);
+    }
+    .s7-gold-line.drawn { transform: scaleX(1) rotate(-3deg); }
+    .s7-plot {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 5.8vw, 5.2rem);
+      font-weight: 500;
+      line-height: 1.02;
+      letter-spacing: -0.025em;
+      color: #231105;
+      text-shadow: 0 2px 28px rgba(255, 248, 232, 0.8);
+    }
+    .s7-plot span {
+      color: #c2410c;
+      font-style: italic;
+      font-weight: 400;
+    }
+    .s7-hand {
+      margin-top: 0.65rem;
+      font-family: var(--font-hand);
+      font-size: clamp(1.6rem, 2.6vw, 2.3rem);
+      font-weight: 600;
+      color: #7c2d12;
+      transform: rotate(-2deg);
+      display: inline-block;
+    }
+
+    /* ==================== SHARED EDITORIAL SYSTEM FOR 3 PILLARS (SLIDES 08, 09, 10) ==================== */
+    .pillar-editorial {
+      max-width: min(42vw, 520px);
+    }
+    .pillar-num {
+      font-family: var(--font-mono);
+      font-size: clamp(0.7rem, 0.92vw, 0.82rem);
+      letter-spacing: 0.32em;
+      color: #fbbf24;
+      margin-bottom: 0.7rem;
+    }
+    .pillar-rule {
+      width: 36px;
+      height: 1px;
+      background: linear-gradient(90deg, #fbbf24, transparent);
+      margin-bottom: 1.15rem;
+    }
+    .pillar-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 5vw, 4.5rem);
+      font-weight: 400;
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+      color: #fef9ee;
+      text-shadow: 0 10px 38px rgba(0, 0, 0, 0.62);
+    }
+    .pillar-whisper {
+      margin-top: 0.95rem;
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(1.05rem, 1.5vw, 1.38rem);
+      line-height: 1.45;
+      color: rgba(254, 243, 199, 0.78);
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.55);
+    }
+
+    /* SLIDE 08: WHAT TO LOVE */
+    .s8-vignette {
+      background: linear-gradient(90deg, rgba(16, 10, 5, 0.84) 0%, rgba(16, 10, 5, 0.42) 40%, transparent 62%);
+    }
+    .s8-layout {
+      align-items: flex-start;
+    }
+
+    /* SLIDE 09: HOW TO LOVE (UPPER SKY, ZERO CARDS) */
+    .s9-vignette {
+      background: linear-gradient(180deg, rgba(16, 9, 5, 0.68) 0%, rgba(16, 9, 5, 0.18) 38%, transparent 58%);
+    }
+    .s9-layout {
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding-top: clamp(9.5vh, 11.5vh, 13.5vh);
+    }
+
+    /* SLIDE 10: ZERO REGRETS (UPPER SKY, ZERO CARDS) */
+    .s10-vignette {
+      background:
+        radial-gradient(ellipse 56% 45% at 18% 20%, rgba(16, 10, 6, 0.56) 0%, transparent 72%),
+        linear-gradient(180deg, rgba(16, 10, 6, 0.52) 0%, rgba(16, 10, 6, 0.14) 36%, transparent 56%);
+    }
+    .s10-layout {
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding-top: clamp(9.5vh, 11.5vh, 13.5vh);
+    }
+
+    /* ==================== SLIDE 11: TIME PARADOX ==================== */
+    .s11-vignette {
+      background: linear-gradient(90deg, rgba(14, 9, 4, 0.84) 0%, rgba(14, 9, 4, 0.44) 44%, transparent 66%);
+    }
+    .s11-layout {
+      align-items: flex-start;
+    }
+    .s11-inner {
+      max-width: min(48vw, 640px);
+    }
+    .s11-enjoy {
+      font-family: var(--font-display);
+      font-size: clamp(2.1rem, 3.6vw, 3.6rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #fef3c7;
+      text-shadow: 0 10px 36px rgba(0, 0, 0, 0.6);
+    }
+    .s11-rule {
+      width: 48px;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(251, 191, 36, 0.85), transparent);
+      margin: clamp(1.1rem, 2.4vh, 1.8rem) 0;
+    }
+    .s11-regret {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(2.1rem, 3.6vw, 3.6rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #fbbf24;
+      text-shadow: 0 0 42px rgba(251, 191, 36, 0.25);
+    }
+
+    /* ==================== SLIDE 12: CONCLUSION (OPEN TYPOGRAPHY, ZERO CARDS) ==================== */
+    .s12-vignette {
+      background: linear-gradient(90deg, rgba(16, 10, 5, 0.84) 0%, rgba(16, 10, 5, 0.42) 44%, transparent 64%);
+    }
+    .s12-layout {
+      align-items: flex-start;
+    }
+    .s12-inner {
+      max-width: min(40vw, 500px);
+    }
+    .s12-eyebrow {
+      color: rgba(251, 191, 36, 0.82);
+      margin-bottom: 1.4rem;
+    }
+    .s12-list {
+      border-left: 1.5px solid rgba(251, 191, 36, 0.55);
+      padding-left: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.7rem, 1.5vh, 1.05rem);
+    }
+    .s12-step {
+      font-family: var(--font-display);
+      font-size: clamp(1.65rem, 2.8vw, 2.55rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: #fef3c7;
+      text-shadow: 0 6px 26px rgba(0, 0, 0, 0.55);
+    }
+    .s12-final {
+      margin-top: clamp(1.6rem, 3.2vh, 2.4rem);
+      font-family: var(--font-hand);
+      font-size: clamp(2.2rem, 3.5vw, 3.25rem);
+      font-weight: 700;
+      color: #fde68a;
+      white-space: nowrap;
+      text-shadow: 0 0 34px rgba(251, 191, 36, 0.36);
+    }
+
+    /* Zine decorative stamps */
+    .zine-stamp {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border: 1.5px solid currentColor;
+      border-radius: 3px;
+    }
+
+    /* ==================== STUDIO DRAWER & HUD ==================== */
+    .studio-trigger {
+      position: fixed;
+      top: 14px;
+      right: 16px;
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: rgba(12, 13, 18, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: rgba(255, 255, 255, 0.76);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      opacity: 0.42;
+      transition: opacity 0.25s ease, background 0.25s ease;
+    }
+    .studio-trigger:hover { opacity: 1; background: rgba(22, 24, 34, 0.92); }
+    body.presenting .studio-trigger,
+    body.curtain-open .studio-trigger { opacity: 0; pointer-events: none; }
+
+    /* Subtle floating piano status pill (hidden during fullscreen presentation) */
+    .audio-pill {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      z-index: 88;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(12, 13, 18, 0.66);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      color: rgba(248, 250, 252, 0.72);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      opacity: 0.48;
+      transition: opacity 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    }
+    .audio-pill:hover { opacity: 1; }
+    .audio-pill.playing { color: #fde68a; border-color: rgba(251, 191, 36, 0.34); }
+    .audio-pill.muted { color: rgba(148, 163, 184, 0.62); }
+    body.presenting .audio-pill,
+    body.curtain-open .audio-pill { opacity: 0; pointer-events: none; }
+
+    /* Golden Hour ambient dust canvas */
+    #golden-dust-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 46;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+    #golden-dust-canvas.visible { opacity: 1; }
+
+    /* Act-Boundary Dip-to-Black Veil & Blackout (B) */
+    .act-veil {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      background: #020203;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.42s var(--ease-cinema);
+    }
+    .act-veil.dip { opacity: 0.92; transition: opacity 0.22s ease-in; }
+    .act-veil.blackout { opacity: 1; pointer-events: auto; transition: opacity 0.6s ease; }
+
+    /* Pre-Show Immersive Cinema Curtain (P) */
+    .cinema-curtain {
+      position: fixed;
+      inset: 0;
+      z-index: 85;
+      background: radial-gradient(circle at 50% 48%, #0a090d 0%, #020203 72%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.4rem;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 1.3s var(--ease-cinema), visibility 0s linear 1.3s;
+    }
+    body.curtain-open .cinema-curtain {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition: opacity 0.45s ease, visibility 0s linear 0s;
+    }
+    .curtain-dot-wrap {
+      position: relative;
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+    }
+    .curtain-halo {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.34) 0%, transparent 72%);
+      animation: emberBreathe 4.2s ease-in-out infinite;
+    }
+    .curtain-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #fde68a;
+      box-shadow: 0 0 18px 4px rgba(251, 191, 36, 0.72);
+    }
+    .curtain-title {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(1.3rem, 2.3vw, 2rem);
+      font-weight: 400;
+      color: rgba(248, 250, 252, 0.88);
+      letter-spacing: 0.01em;
+    }
+    .curtain-hint {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(248, 250, 252, 0.36);
+    }
+
+    .studio-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(365px, 92vw);
+      height: 100vh;
+      z-index: 100;
+      background: rgba(10, 11, 15, 0.95);
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(24px);
+      padding: 18px 20px;
+      overflow-y: auto;
+      transform: translateX(104%);
+      transition: transform 0.45s var(--ease-cinema);
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+    .studio-drawer.open { transform: translateX(0); }
+
+    .studio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .studio-header h2 {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #f8fafc;
+    }
+    .close-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #cbd5e1;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+
+    .studio-section-title {
+      font-family: var(--font-mono);
+      font-size: 0.64rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 7px;
+    }
+
+    .theme-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .theme-card {
+      text-align: left;
+      padding: 9px 12px;
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .theme-card:hover { background: rgba(255, 255, 255, 0.08); }
+    .theme-card.active {
+      border-color: #fbbf24;
+      background: rgba(251, 191, 36, 0.11);
+    }
+    .theme-card strong {
+      display: block;
+      font-size: 0.83rem;
+      margin-bottom: 2px;
+    }
+    .theme-card span {
+      display: block;
+      font-size: 0.71rem;
+      color: #94a3b8;
+      line-height: 1.3;
+    }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 0.81rem;
+      color: #e2e8f0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      cursor: pointer;
+    }
+    .toggle-row input {
+      accent-color: #fbbf24;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    .slide-jump-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+    .jump-btn {
+      padding: 6px 4px;
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      cursor: pointer;
+    }
+    .jump-btn.active {
+      background: #fbbf24;
+      color: #09090b;
+      border-color: #fbbf24;
+      font-weight: 700;
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 11px;
+      border-radius: 9px;
+      border: none;
+      background: linear-gradient(135deg, #fbbf24, #f97316);
+      color: #181006;
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 0.84rem;
+      cursor: pointer;
+    }
+    .secondary-btn {
+      width: 100%;
+      padding: 10px;
+      border-radius: 9px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.05);
+      color: #e2e8f0;
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .secondary-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(251, 191, 36, 0.45);
+    }
+    .btn-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 0;
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .slider-row input[type="range"] {
+      width: 135px;
+      accent-color: #fbbf24;
+      cursor: pointer;
+    }
+    .audio-hint {
+      margin-top: 7px;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.06em;
+      color: #94a3b8;
+    }
+
+    .shortcuts-box {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: #94a3b8;
+      line-height: 1.7;
+      padding: 11px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* Optional Presenter HUD (N) */
+    .presenter-hud {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 80;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 7px 16px;
+      border-radius: 999px;
+      background: rgba(8, 9, 13, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: rgba(248, 250, 252, 0.84);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    body.show-hud .presenter-hud { opacity: 1; }
+    .hud-accent { color: #fbbf24; }
+
+    /* Progress Hairline */
+    .progress-hairline {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #38bdf8, #fbbf24);
+      z-index: 75;
+      transition: width 0.6s var(--ease-cinema), opacity 0.4s ease;
+      opacity: 0.65;
+    }
+    body.presenting:not(.show-hud) .progress-hairline,
+    body.curtain-open .progress-hairline {
+      opacity: 0;
+    }
+
+    @media (max-width: 820px) {
+      .s3-hairline-block, .s4-inner, .s5-ledger, .pillar-editorial, .s11-inner, .s12-inner { max-width: 100%; }
+      .s4-loader, .s5-ledger { width: 100%; }
+    }
+  </style>
+</head>
+<body data-theme="cinema" class="letterbox-on">
+  <div id="app">
+    <div class="film-grain"></div>
+    <div class="zine-halftone"></div>
+    <canvas id="golden-dust-canvas"></canvas>
+    <div class="letterbox top"></div>
+    <div class="letterbox bottom"></div>
+    <div class="act-veil" id="act-veil"></div>
+
+    <!-- Pre-Show Immersive Cinema Curtain (P) -->
+    <div class="cinema-curtain" id="curtain">
+      <div class="curtain-dot-wrap">
+        <div class="curtain-halo"></div>
+        <div class="curtain-dot"></div>
+      </div>
+      <div class="curtain-title">Is it really that great to be young?</div>
+      <div class="curtain-hint">Press Space or click anywhere to begin</div>
+    </div>
+
+    <!-- A24 Editorial Frame Metadata -->
+    <div class="a24-meta tl" id="a24-act">ACT I · THE HOOK</div>
+    <div class="a24-meta tr" id="a24-time">00:00 — 00:45</div>
+    <div class="a24-meta bl">IS IT REALLY THAT GREAT TO BE YOUNG?</div>
+    <div class="a24-meta br" id="a24-counter">01 / 12</div>
+
+    <div class="slides-container" id="slides">
+
+      <!-- ==================== SLIDE 01: THE HOOK ==================== -->
+      <section class="slide active" data-slide="0" data-beats="1" data-act="ACT I · THE HOOK" data-time="00:00 — 00:45" data-cue="Silence 2s → Click to slash">
+        <div class="slide-frame">
+          <div class="s1-bg"></div>
+          <div class="s1-ambient-glow" id="s1-glow"></div>
+          <div class="zine-tape tl"></div>
+          <div class="zine-tape br"></div>
+          <div class="slide-content s1-center">
+            <div class="eyebrow s1-eyebrow">What everyone tells you</div>
+            <div class="s1-quote-wrap">
+              <h1 class="s1-quote" id="s1-quote">“The <em>best years</em><br/>of your life.”</h1>
+              <svg class="s1-slash" id="s1-slash" viewBox="0 0 900 110" preserveAspectRatio="none">
+                <path d="M 18 92 Q 380 56, 882 18" />
+              </svg>
+            </div>
+            <div class="beat s1-response" data-beat="1">
+              <div class="s1-really">Really?</div>
+              <div class="s1-rule"></div>
+              <div class="s1-sub">Two sides of the same coin</div>
+            </div>
+            <div class="zine-stamp zine-only meme-ref" style="--rot: 5deg; bottom: 11vh; right: 8vw; color: #fb7185;">ADULT PROPAGANDA™</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE 02: SOLITUDE (BREATHE) ==================== -->
+      <section class="slide" data-slide="1" data-beats="1" data-act="ACT I.A · MICRO" data-time="00:45 — 01:30" data-cue="Pure image first → Click for 'Out of sync.'">
+        <div class="slide-frame">
+          <div class="zine-tape tl"></div>
+          <div class="zine-tape br"></div>
+          <img class="slide-bg-img" src="./assets/slide2_solitude.jpg" alt="Quiet blue-hour school courtyard" />
+          <div class="vignette s2-vignette"></div>
+          <div class="slide-content s2-layout">
+            <div class="beat" data-beat="1">
+              <div class="s2-dot-row">
+                <span class="s2-dot"></span>
+                <span class="s2-tag">Middle school</span>
+              </div>
+              <h2 class="s2-title">Out of sync.</h2>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE 03: NO ARMOR YET ==================== -->
+      <section class="slide" data-slide="2" data-beats="1" data-act="ACT I.A · MICRO" data-time="01:30 — 02:00" data-cue="Intimate voice · Click for 'No armor yet.'">
+        <div class="slide-frame">
+          <div class="zine-tape tl"></div>
+          <div class="zine-tape br"></div>
+          <img class="slide-bg-img" src="./assets/slide3_no_armor.jpg" alt="Teenager alone by a rain-streaked school hallway window" />
+          <div class="vignette s3-vignette"></div>
+          <div class="slide-content s3-layout">
+            <div class="beat s3-hairline-block" data-beat="1">
+              <h2 class="s3-title">No armor yet.</h2>
+              <p class="s3-whisper">When a tiny world feels like the whole universe.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE 04: TOO EARLY (BORDERLESS) ==================== -->
+      <section class="slide" data-slide="3" data-beats="2" data-act="ACT I.B · MACRO" data-time="02:00 — 02:40" data-cue="Shift from 'I' to 'We' · 38% → Whispers">
+        <div class="slide-frame">
+          <div class="zine-tape tl"></div>
+          <div class="zine-tape br"></div>
+          <img class="slide-bg-img" src="./assets/slide3_too_early.jpg" alt="Young person in blue screen glow at 7 AM" />
+          <div class="vignette s4-vignette"></div>
+          <div class="slide-content s4-layout">
+            <div class="s4-inner">
+              <div class="s4-os-whisper">
+                <span class="s4-os-dot"></span>
+                <span>childhood.exe</span>
+              </div>
+              <h2 class="s4-title">Too early.</h2>
+
+              <div class="beat" data-beat="1">
+                <div class="s4-loader">
+                  <div class="s4-loader-meta">
+                    <span>CAREFREE YEARS</span>
+                    <span class="err">38% · INTERRUPTED</span>
+                  </div>
+                  <div class="s4-bar-track"><div class="s4-bar-fill"></div></div>
+                </div>
+              </div>
+
+              <div class="beat s4-whispers meme-ref" data-beat="2">
+                <div class="s4-line"><span class="time">07:02</span><span>Global crisis before breakfast</span></div>
+                <div class="s4-line"><span class="time">07:03</span><span>Pick your entire future</span></div>
+                <div class="s4-line meme-line"><span class="time">07:04</span><span>“This is fine.”</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE 05: THE BILL (BORDERLESS EDITORIAL) ==================== -->
+      <section class="slide" data-slide="4" data-beats="2" data-act="ACT I.B · THE BILL" data-time="02:40 — 03:15" data-cue="Pure diner shot first → Click for ledger → 'FIX IT.'">
+        <div class="slide-frame">
+          <div class="zine-tape tl"></div>
+          <div class="zine-tape br"></div>
+          <img class="slide-bg-img" src="./assets/slide5_the_bill.jpg" alt="Young man alone at deserted diner table staring at the bill" />
+          <div class="vignette s5-vignette"></div>
+          <div class="slide-content s5-layout">
+            <div class="beat s5-ledger" data-beat="1">
+              <div class="eyebrow s5-eyebrow">The generational invoice</div>
+              <h2 class="s5-title">The bill.</h2>
+              <div class="s5-row"><span>Climate</span><span class="dim">Past due</span></div>
+              <div class="s5-row"><span>Economy</span><span class="dim">Unpaid</span></div>
+              <div class="s5-row"><span>Systems</span><span class="dim">Carried over</span></div>
+              <div class="beat" data-beat="2">
+                <div class="s5-total">
+                  <span class="label">TOTAL DUE</span>
+                  <span class="val">FIX IT.</span>
+                </div>
+                <span class="s5-note meme-ref">we didn't even order.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE 06: THE PIVOT (SILENCE) ==================== -->
+      <section class="slide" data-slide="5" data-beats="1" data-act="ACT II · THE PIVOT" data-time="03:15 — 03:45" data-cue="SILENCE 3s · Take 2 steps to the side">
+        <div class="slide-frame">
+          <div class="s6-bg"></div>
+          <canvas id="ember-canvas"></canvas>
+          <div class="slide-content s6-center">
+            <div class="spark-stage">
+              <div class="spark-halo" id="s6-halo"></div>
+              <div class="spark-core"></div>
+            </div>
+            <div class="beat" data-beat="1">
+              <div class="s6-whisper">Unwritten pages.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE 07: PLOT DEVELOPMENT ==================== -->
+      <section class="slide" data-slide="6" data-beats="1" data-act="ACT III.A · GOLDEN HOUR" data-time="03:45 — 04:30" data-cue="Smile, open posture · Transform FAILURE">
+        <div class="slide-frame">
+          <div class="zine-tape tl"></div>
+          <div class="zine-tape br"></div>
+          <img class="slide-bg-img s7-bg-img" src="./assets/slide6_plot_dev.jpg" alt="Golden hour joyful skateboard moment" />
+          <div class="vignette s7-vignette"></div>
+          <div class="slide-content s7-layout">
+            <div class="s7-failure-wrap">
+              <div class="s7-failure" id="s7-failure">FAILURE</div>
+              <div class="s7-gold-line" id="s7-gold-line"></div>
+            </div>
+            <div class="beat" data-beat="1">
+              <h2 class="s7-plot">Plot<br/><span>Development.</span></h2>
+              <div class="s7-hand meme-ref">it's called learning.</div>
+            </div>
+            <div class="zine-stamp zine-only meme-ref" style="--rot: -4deg; bottom: 11vh; left: 7.5vw; color: #7c2d12;">CHARACTER ARC 10/10</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE 08: PILLAR 01 — WHAT TO LOVE ==================== -->
+      <section class="slide" data-slide="7" data-beats="1" data-act="ACT III.B · PILLAR 01" data-time="04:30 — 04:55" data-cue="Warm energy · Let studio frame breathe first">
+        <div class="slide-frame">
+          <div class="zine-tape tl"></div>
+          <div class="zine-tape br"></div>
+          <img class="slide-bg-img" src="./assets/slide8_what_to_love.jpg" alt="Young man sketching happily in golden sunlit room" />
+          <div class="vignette s8-vignette"></div>
+          <div class="slide-content s8-layout">
+            <div class="beat pillar-editorial" data-beat="1">
+              <div class="pillar-num">01</div>
+              <div class="pillar-rule"></div>
+              <h2 class="pillar-title">What to love.</h2>
+              <p class="pillar-whisper">Passions, curiosity, what makes you feel alive.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE 09: PILLAR 02 — HOW TO LOVE ==================== -->
+      <section class="slide" data-slide="8" data-beats="1" data-act="ACT III.B · PILLAR 02" data-time="04:55 — 05:15" data-cue="Echo Slide 02 · Finding your people">
+        <div class="slide-frame">
+          <div class="zine-tape tl"></div>
+          <div class="zine-tape br"></div>
+          <img class="slide-bg-img" src="./assets/slide7_love_live.jpg" alt="Friends watching golden sunset horizon" />
+          <div class="vignette s9-vignette"></div>
+          <div class="slide-content s9-layout">
+            <div class="beat pillar-editorial" data-beat="1">
+              <div class="pillar-num">02</div>
+              <div class="pillar-rule"></div>
+              <h2 class="pillar-title">How to love.</h2>
+              <p class="pillar-whisper">Finding your people — and caring deeply.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE 10: PILLAR 03 — ZERO REGRETS ==================== -->
+      <section class="slide" data-slide="9" data-beats="1" data-act="ACT III.B · PILLAR 03" data-time="05:15 — 05:35" data-cue="Open gesture toward horizon">
+        <div class="slide-frame">
+          <div class="zine-tape tl"></div>
+          <div class="zine-tape br"></div>
+          <img class="slide-bg-img" src="./assets/slide10_zero_regrets.jpg" alt="Young man overlooking vast golden ocean horizon" />
+          <div class="vignette s10-vignette"></div>
+          <div class="slide-content s10-layout">
+            <div class="beat pillar-editorial" data-beat="1">
+              <div class="pillar-num">03</div>
+              <div class="pillar-rule"></div>
+              <h2 class="pillar-title">Zero regrets.</h2>
+              <p class="pillar-whisper">Living a life you’ll be proud to look back on.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE 11: THE PARADOX OF TIME ==================== -->
+      <section class="slide" data-slide="10" data-beats="1" data-act="FINALE · THE PARADOX" data-time="05:35 — 06:00" data-cue="Slow down · Let the hourglass carry the weight">
+        <div class="slide-frame">
+          <div class="zine-tape tl"></div>
+          <div class="zine-tape br"></div>
+          <img class="slide-bg-img" src="./assets/slide11_paradox.jpg" alt="Glowing golden hourglass in warm sunbeams" />
+          <div class="vignette s11-vignette"></div>
+          <div class="slide-content s11-layout">
+            <div class="s11-inner">
+              <h2 class="s11-enjoy">Long enough to enjoy.</h2>
+              <div class="beat" data-beat="1">
+                <div class="s11-rule"></div>
+                <h2 class="s11-regret">Short enough to regret.</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE 12: THE TAKEAWAY & LIST ==================== -->
+      <section class="slide" data-slide="11" data-beats="1" data-act="FINALE · THE TAKEAWAY" data-time="06:00 — 06:30" data-cue="Return center · Eye contact on '…and just be happy.'">
+        <div class="slide-frame">
+          <div class="zine-tape tl"></div>
+          <div class="zine-tape br"></div>
+          <img class="slide-bg-img" src="./assets/slide8_conclusion.jpg" alt="Golden sunrise desk with open notebook and hourglass" />
+          <div class="vignette s12-vignette"></div>
+          <div class="slide-content s12-layout">
+            <div class="s12-inner">
+              <div class="eyebrow s12-eyebrow">Your youth list</div>
+              <div class="s12-list">
+                <div class="s12-step">Take a break.</div>
+                <div class="s12-step">Write the list.</div>
+                <div class="s12-step">Live through it.</div>
+              </div>
+              <div class="beat s12-final" data-beat="1">…and just be happy.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Discreet Progress Hairline -->
+    <div class="progress-hairline" id="progress-bar" style="width: 8.33%"></div>
+
+    <!-- Optional Presenter HUD (N) -->
+    <div class="presenter-hud" id="presenter-hud">
+      <span id="hud-slide">01/12</span>
+      <span class="hud-accent" id="hud-beat">Beat 0/1</span>
+      <span id="hud-cue">Silence 2s → Click to slash</span>
+      <span id="hud-timer">00:00</span>
+    </div>
+
+    <!-- Subtle Piano Audio Pill (hidden in fullscreen presentation) -->
+    <button class="audio-pill" id="audio-pill" title="Couper / activer le piano (M) · Voix douce (D)">
+      <span id="audio-pill-icon">♪</span>
+      <span id="audio-pill-label">PIANO READY</span>
+    </button>
+
+    <!-- Studio Trigger -->
+    <button class="studio-trigger" id="studio-btn" title="Ouvrir le Studio Direction Artistique (S)">
+      <span>⚙</span>
+      <span>STUDIO (S)</span>
+    </button>
+
+    <!-- ==================== STUDIO CONFIG DRAWER ==================== -->
+    <aside class="studio-drawer" id="studio-drawer">
+      <div class="studio-header">
+        <h2>Studio DA & Config</h2>
+        <button class="close-btn" id="close-studio">✕</button>
+      </div>
+
+      <div>
+        <div class="studio-section-title">1. Direction Artistique (3 options)</div>
+        <div class="theme-cards">
+          <button class="theme-card active" data-set-theme="cinema">
+            <strong>Cinéma d'Animation</strong>
+            <span>Plein écran immersif, lumières Shinkai, typographie libre sans cards.</span>
+          </button>
+          <button class="theme-card" data-set-theme="a24">
+            <strong>Éditorial Indie (A24)</strong>
+            <span>Cadre galerie, métadonnées 35mm, typographie haute couture.</span>
+          </button>
+          <button class="theme-card" data-set-theme="zine">
+            <strong>Zine & Collage Moderne</strong>
+            <span>Textures halftone, scotch, tampons & énergie culture jeune.</span>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <div class="studio-section-title">2. Ambiance & Détails</div>
+        <label class="toggle-row">
+          <span>Bandes Cinéma 2.39:1</span>
+          <input type="checkbox" id="opt-letterbox" checked />
+        </label>
+        <label class="toggle-row">
+          <span>Grain Pellicule 35mm</span>
+          <input type="checkbox" id="opt-grain" checked />
+        </label>
+        <label class="toggle-row">
+          <span>Refs Jeunes & Memes subtils</span>
+          <input type="checkbox" id="opt-memes" checked />
+        </label>
+        <label class="toggle-row">
+          <span>Respiration visuelle (Ken Burns)</span>
+          <input type="checkbox" id="opt-motion" checked />
+        </label>
+        <label class="toggle-row">
+          <span>Barre Repères & Chrono (N)</span>
+          <input type="checkbox" id="opt-hud" />
+        </label>
+      </div>
+
+      <div>
+        <div class="studio-section-title">3. Musique Piano (Adaptative 4 Arcs)</div>
+        <label class="toggle-row">
+          <span>Piano Feutré en Fond</span>
+          <input type="checkbox" id="opt-music" checked />
+        </label>
+        <div class="slider-row">
+          <span>Volume (<span id="vol-pct">28%</span>)</span>
+          <input type="range" id="opt-volume" min="0" max="100" value="28" />
+        </div>
+        <div class="audio-hint" id="piano-status-hint">M : Mute doux · D : Voice Duck (35%) · Silence au Pivot</div>
+      </div>
+
+      <div>
+        <div class="studio-section-title">4. Naviguer dans les 12 Slides</div>
+        <div class="slide-jump-grid" id="jump-grid"></div>
+      </div>
+
+      <div>
+        <div class="studio-section-title">5. Mode Présentation</div>
+        <div class="btn-stack">
+          <button class="primary-btn" id="btn-immersive">Lancer la Vraie Présentation (P)</button>
+          <button class="secondary-btn" id="btn-presenter">Ouvrir Console Présentateur (O)</button>
+        </div>
+      </div>
+
+      <div class="shortcuts-box">
+        <strong>Raccourcis clavier :</strong><br/>
+        → / Espace / PageDown / Swipe : Beat suivant<br/>
+        ← / PageUp : Reculer · <strong>P</strong> : Vraie Présentation<br/>
+        <strong>O</strong> : Console 2e écran · <strong>B</strong> : Blackout · <strong>F</strong> : Plein écran<br/>
+        <strong>M</strong> : Mute piano · <strong>D</strong> : Voice Duck · <strong>N</strong> : HUD · <strong>R</strong> : Reset chrono
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('instant') === '1') {
+      document.body.classList.add('instant-mode');
+    }
+
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    let currentSlide = 0;
+    let currentBeat = 0;
+    let timerSeconds = 0;
+    let timerInterval = null;
+    let isBlackout = false;
+    let isTransitioning = false;
+    let cursorTimer = null;
+
+    const SCRIPT_CUES = [
+      {
+        title: "01 — The Hook",
+        targetEndSec: 45,
+        spoken: "Every time you talk to an adult, they tell you: “Enjoy your youth—these are the best years of your life!” They say it with so much nostalgia... [PAUSE 2s · CLIC → slash] Wait... are they really? Is it actually that great to be young? Today, two angles: how brutally hard it can feel, and how incredible it could—and should—be."
+      },
+      {
+        title: "02 — Out of Sync (Micro)",
+        targetEndSec: 90,
+        spoken: "Before it gets great, let's be honest about the weight. In middle school, I was that kid who was just... too young. Out of sync with everyone else. [CLIC] Picture standing at the edge of the courtyard while groups laugh like they read the same social handbook. And you? Zero friends, checking your backpack."
+      },
+      {
+        title: "03 — No Armor Yet (Micro)",
+        targetEndSec: 120,
+        spoken: "[CLIC] That's what people forget: you don't have emotional armor yet. You haven't built the thick skin adults take for granted. At twelve, feeling out of place feels like the entire universe closed its door—because that tiny schoolyard IS your entire universe."
+      },
+      {
+        title: "04 — Too Early (Macro)",
+        targetEndSec: 160,
+        spoken: "Then you find your footing, lift your head... and see the world moving faster and hitting harder. [CLIC → 38%] Ours is a “too early” generation—our carefree years got interrupted halfway through. [CLIC → 07:02/03/04] Scrolling three global crises before breakfast while asked to pick your career before knowing who you are."
+      },
+      {
+        title: "05 — The Bill (Macro)",
+        targetEndSec: 195,
+        spoken: "[CLIC] It feels like sitting down at a restaurant just as the previous guests walk out—and the waiter hands US the receipt. [CLIC → FIX IT.] Climate crisis, unstable economy, broken systems... Expected to solve every mess while building our own lives from scratch. We didn't even order."
+      },
+      {
+        title: "06 — The Pivot (Silence)",
+        targetEndSec: 225,
+        spoken: "[PIANO SILENCE · 3s DE SILENCE · 2 PAS DE CÔTÉ] Looking at all of that... you might wonder why anyone would want to be young. And yet—pause for a second. [CLIC → Unwritten pages + ACCORD DORÉ] Why would every billionaire trade every penny to be our age again? Because we hold what money can't buy: unwritten pages."
+      },
+      {
+        title: "07 — Plot Development (Golden Hour)",
+        targetEndSec: 270,
+        spoken: "[SOURIRE · CLIC] Being young isn't just the weight you carry—it's what you're allowed to do with your time. Having fun without an excuse. At 45, mistakes come with mortgages. At 20? Fall off the board, laugh in the dust—it's learning, not failing. Every detour is plot development."
+      },
+      {
+        title: "08 — Pillar 01: What to Love",
+        targetEndSec: 295,
+        spoken: "[CLIC] While nothing is locked in stone yet, you get to answer the real questions. First: figuring out what to love. Which curiosity keeps you awake at midnight—which art, ideas, or weird projects actually make you feel alive."
+      },
+      {
+        title: "09 — Pillar 02: How to Love",
+        targetEndSec: 315,
+        spoken: "[CLIC] Second: learning how to love. Remember that lonely kid in the courtyard? Youth is when you finally meet your people—the friends who match your energy—and learn how to show up for them deeply, without holding back."
+      },
+      {
+        title: "10 — Pillar 03: Zero Regrets",
+        targetEndSec: 335,
+        spoken: "[CLIC] And third: learning how to live by your own rules, in a way that won't make you look back wishing you had been braver. Taking the risk before life decides for you. Not someone else's checklist—yours."
+      },
+      {
+        title: "11 — The Paradox of Time",
+        targetEndSec: 360,
+        spoken: "So yes—being young really is the big deal. [CLIC] But like every great deal, it comes with an expiration date. Long enough to enjoy it, explore, and fall in love with the world... yet short enough to leave plenty of regrets if you let it slip by on autopilot."
+      },
+      {
+        title: "12 — Your Youth List",
+        targetEndSec: 390,
+        spoken: "[RETOUR AU CENTRE] If you're still in those great ages, don't rush to the finish line. Take a real break. Write a list—big goals and small terrifying things you want to try. Manage to get through it... [CLIC] and just be happy. [1.5s] Thank you."
+      }
+    ];
+
+    const STORAGE_KEY = 'jeff_ted_talk_studio_config_v4';
+    const defaultConfig = {
+      theme: 'cinema',
+      letterbox: true,
+      grain: true,
+      memes: true,
+      motion: true,
+      hud: false,
+      music: true,
+      musicVolume: 0.28,
+      curtainOnPresent: true
+    };
+
+    let config = { ...defaultConfig, ...(JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')) };
+
+    const els = {
+      drawer: document.getElementById('studio-drawer'),
+      studioBtn: document.getElementById('studio-btn'),
+      closeStudio: document.getElementById('close-studio'),
+      jumpGrid: document.getElementById('jump-grid'),
+      progressBar: document.getElementById('progress-bar'),
+      a24Act: document.getElementById('a24-act'),
+      a24Time: document.getElementById('a24-time'),
+      a24Counter: document.getElementById('a24-counter'),
+      hudSlide: document.getElementById('hud-slide'),
+      hudBeat: document.getElementById('hud-beat'),
+      hudCue: document.getElementById('hud-cue'),
+      hudTimer: document.getElementById('hud-timer'),
+      optLetterbox: document.getElementById('opt-letterbox'),
+      optGrain: document.getElementById('opt-grain'),
+      optMemes: document.getElementById('opt-memes'),
+      optMotion: document.getElementById('opt-motion'),
+      optHud: document.getElementById('opt-hud'),
+      optMusic: document.getElementById('opt-music'),
+      optVolume: document.getElementById('opt-volume'),
+      volPct: document.getElementById('vol-pct'),
+      pianoStatusHint: document.getElementById('piano-status-hint'),
+      audioPill: document.getElementById('audio-pill'),
+      audioPillLabel: document.getElementById('audio-pill-label'),
+      btnImmersive: document.getElementById('btn-immersive'),
+      btnPresenter: document.getElementById('btn-presenter'),
+      curtain: document.getElementById('curtain'),
+      actVeil: document.getElementById('act-veil'),
+      goldenDustCanvas: document.getElementById('golden-dust-canvas')
+    };
+
+    function pad2(n) {
+      return String(n).padStart(2, '0');
+    }
+
+    function formatTime(sec) {
+      return `${pad2(Math.floor(sec / 60))}:${pad2(sec % 60)}`;
+    }
+
+    // =========================================================================
+    // 1. OFFLINE ADAPTIVE FELT-PIANO ENGINE (WEB AUDIO API)
+    // =========================================================================
+    class CinemaPianoEngine {
+      constructor() {
+        this.ctx = null;
+        this.masterGain = null;
+        this.duckGain = null;
+        this.pivotGain = null;
+        this.dryGain = null;
+        this.wetGain = null;
+        this.convolver = null;
+        this.started = false;
+        this.isMuted = false;
+        this.isDucked = false;
+        this.schedulerTimer = null;
+        this.nextStepTime = 0;
+        this.stepIdx = 0;
+        this.barIdx = 0;
+        this.pivotBloomed = false;
+        this.finaleResolved = false;
+      }
+
+      midiToFreq(m) {
+        return 440 * Math.pow(2, (m - 69) / 12);
+      }
+
+      buildReverbBuffer(ctx) {
+        const sr = ctx.sampleRate;
+        const duration = 2.8;
+        const len = Math.floor(sr * duration);
+        const buf = ctx.createBuffer(2, len, sr);
+        const preDelay = Math.floor(sr * 0.014);
+        for (let ch = 0; ch < 2; ch++) {
+          const data = buf.getChannelData(ch);
+          let lp = 0;
+          for (let i = preDelay; i < len; i++) {
+            const t = (i - preDelay) / (len - preDelay);
+            const env = Math.pow(1 - t, 2.75);
+            const white = Math.random() * 2 - 1;
+            // Warm hall low-pass smoothing
+            lp = lp * 0.72 + white * 0.28;
+            data[i] = lp * env * 0.55;
+          }
+        }
+        return buf;
+      }
+
+      ensureStarted() {
+        if (!config.music) return;
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (!AudioCtx) return;
+          this.ctx = new AudioCtx();
+          this.masterGain = this.ctx.createGain();
+          this.duckGain = this.ctx.createGain();
+          this.pivotGain = this.ctx.createGain();
+          this.dryGain = this.ctx.createGain();
+          this.wetGain = this.ctx.createGain();
+          this.convolver = this.ctx.createConvolver();
+          this.convolver.buffer = this.buildReverbBuffer(this.ctx);
+
+          const now = this.ctx.currentTime;
+          this.masterGain.gain.setValueAtTime(0.0001, now);
+          this.duckGain.gain.setValueAtTime(1.0, now);
+          this.pivotGain.gain.setValueAtTime(1.0, now);
+          this.dryGain.gain.setValueAtTime(0.42, now);
+          this.wetGain.gain.setValueAtTime(0.68, now);
+
+          this.dryGain.connect(this.pivotGain);
+          this.wetGain.connect(this.convolver);
+          this.convolver.connect(this.pivotGain);
+          this.pivotGain.connect(this.duckGain);
+          this.duckGain.connect(this.masterGain);
+          this.masterGain.connect(this.ctx.destination);
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+        if (!this.started) {
+          this.started = true;
+          this.nextStepTime = this.ctx.currentTime + 0.12;
+          this.schedulerTimer = setInterval(() => this.tick(), 180);
+        }
+        this.syncLevels();
+      }
+
+      syncLevels() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const vol = config.music && !this.isMuted ? Math.max(0.0001, config.musicVolume) : 0.0001;
+        const duckTarget = isBlackout ? 0.08 : (this.isDucked ? 0.35 : 1.0);
+        this.masterGain.gain.setTargetAtTime(vol, now, 0.38);
+        this.duckGain.gain.setTargetAtTime(duckTarget, now, 0.35);
+        updateAudioUI();
+      }
+
+      playNote(midi, velocity = 0.45, durationSec = 4.0, when = null) {
+        if (!this.ctx || !config.music || this.isMuted) return;
+        const t0 = when ?? this.ctx.currentTime;
+
+        const noteOut = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        const cutoffPeak = 1050 + Math.min(1, velocity) * 700;
+        filter.frequency.setValueAtTime(cutoffPeak, t0);
+        filter.frequency.exponentialRampToValueAtTime(Math.max(420, cutoffPeak * 0.42), t0 + Math.min(durationSec, 2.2));
+        filter.Q.setValueAtTime(0.7, t0);
+
+        const osc1 = this.ctx.createOscillator();
+        const osc2 = this.ctx.createOscillator();
+        const osc3 = this.ctx.createOscillator();
+        const g1 = this.ctx.createGain();
+        const g2 = this.ctx.createGain();
+        const g3 = this.ctx.createGain();
+
+        const f = this.midiToFreq(midi);
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(f, t0);
+
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(f * 2, t0);
+
+        osc3.type = 'sine';
+        osc3.frequency.setValueAtTime(f * 3, t0);
+
+        g1.gain.setValueAtTime(1.0, t0);
+        g2.gain.setValueAtTime(0.22, t0);
+        g2.gain.exponentialRampToValueAtTime(0.02, t0 + durationSec * 0.55);
+        g3.gain.setValueAtTime(0.07, t0);
+        g3.gain.exponentialRampToValueAtTime(0.005, t0 + durationSec * 0.3);
+
+        const peak = Math.max(0.02, velocity * 0.34);
+        noteOut.gain.setValueAtTime(0.0001, t0);
+        noteOut.gain.linearRampToValueAtTime(peak, t0 + 0.016);
+        noteOut.gain.exponentialRampToValueAtTime(peak * 0.28, t0 + durationSec * 0.42);
+        noteOut.gain.exponentialRampToValueAtTime(0.0001, t0 + durationSec);
+
+        osc1.connect(g1); g1.connect(filter);
+        osc2.connect(g2); g2.connect(filter);
+        osc3.connect(g3); g3.connect(filter);
+        filter.connect(noteOut);
+        noteOut.connect(this.dryGain);
+        noteOut.connect(this.wetGain);
+
+        osc1.start(t0); osc2.start(t0); osc3.start(t0);
+        const stopAt = t0 + durationSec + 0.08;
+        osc1.stop(stopAt); osc2.stop(stopAt); osc3.stop(stopAt);
+      }
+
+      onSlideChange(slideIdx, beatIdx) {
+        if (!this.ctx || !config.music) return;
+        const now = this.ctx.currentTime;
+        // Reset progression counters gracefully on major act changes
+        if (slideIdx === 5) {
+          if (beatIdx === 0) {
+            // Pivot Beat 0: drop to true silence cleanly
+            this.pivotBloomed = false;
+            this.pivotGain.gain.setTargetAtTime(0.0001, now, 0.52);
+          } else if (beatIdx >= 1 && !this.pivotBloomed) {
+            // Pivot Beat 1 ("Unwritten pages."): single luminous Fmaj9 swell
+            this.pivotBloomed = true;
+            this.pivotGain.gain.setTargetAtTime(1.0, now, 0.08);
+            const fmaj9 = [53, 60, 67, 69, 76];
+            fmaj9.forEach((m, i) => {
+              this.playNote(m, 0.34 + i * 0.03, 5.4, now + i * 0.075);
+            });
+            this.nextStepTime = now + 2.6;
+          }
+          return;
+        }
+
+        this.pivotBloomed = false;
+        this.pivotGain.gain.setTargetAtTime(1.0, now, 0.25);
+
+        if (slideIdx !== 11) {
+          this.finaleResolved = false;
+        }
+      }
+
+      tick() {
+        if (!this.ctx || !config.music || this.isMuted || document.body.classList.contains('curtain-open')) {
+          return;
+        }
+        // Slide 06 (Pivot): stay silent so Jeff's 3-second pause & chord bloom breathe
+        if (currentSlide === 5) {
+          this.nextStepTime = this.ctx.currentTime + 0.25;
+          return;
+        }
+
+        const now = this.ctx.currentTime;
+        while (this.nextStepTime < now + 0.22) {
+          const stepSec = this.scheduleStep(this.nextStepTime);
+          this.nextStepTime += stepSec;
+        }
+      }
+
+      scheduleStep(when) {
+        // Slide 01: Sparse open-fifth / D-minor breathing (~54 BPM)
+        if (currentSlide === 0) {
+          const seq = [50, null, 57, 64, null, 65, 69, null, 64, null, 57, null];
+          const n = seq[this.stepIdx % seq.length];
+          if (n !== null) {
+            this.playNote(n, 0.34, 4.4, when);
+          }
+          this.stepIdx++;
+          return 1.05;
+        }
+
+        // Slides 02–05: Act I — Melancholic Dm9 -> Bbmaj7 -> Gm7 -> A7sus4
+        if (currentSlide >= 1 && currentSlide <= 4) {
+          const bars = [
+            { bass: 38, arp: [50, 57, 64, 65, 69, 64] }, // Dm9
+            { bass: 46, arp: [53, 57, 62, 65, 69, 62] }, // Bbmaj7
+            { bass: 43, arp: [55, 58, 62, 65, 69, 65] }, // Gm7
+            { bass: 45, arp: [57, 62, 64, 67, 69, 64] }  // A7sus4
+          ];
+          const bar = bars[this.barIdx % bars.length];
+          const pos = this.stepIdx % 6;
+
+          if (pos === 0) {
+            const bassNote = currentSlide === 4 ? bar.bass - 12 : bar.bass;
+            this.playNote(bassNote, currentSlide === 4 ? 0.44 : 0.36, 4.8, when);
+          }
+          const skipUpper = currentSlide === 4 && (pos === 2 || pos === 4);
+          if (!skipUpper) {
+            this.playNote(bar.arp[pos], 0.3 + (pos === 4 ? 0.06 : 0), 3.6, when);
+          }
+          // Slide 03 ("No armor yet"): delicate high-register raindrops
+          if (currentSlide === 2 && (pos === 3 || pos === 5)) {
+            const rain = pos === 3 ? 76 : 77;
+            this.playNote(rain, 0.18, 3.2, when + 0.04);
+          }
+
+          this.stepIdx++;
+          if (this.stepIdx % 6 === 0) this.barIdx++;
+          return currentSlide === 3 ? 0.88 : 0.98;
+        }
+
+        // Slides 07–12: Golden Hour — Fmaj7 -> Cmaj7/E -> Dm9 -> Bbmaj7
+        const goldenBars = [
+          { bass: 41, arp: [53, 60, 64, 69, 72, 69] }, // Fmaj7
+          { bass: 40, arp: [55, 60, 64, 71, 72, 67] }, // Cmaj7/E
+          { bass: 38, arp: [57, 60, 64, 69, 72, 64] }, // Dm9
+          { bass: 46, arp: [53, 57, 62, 65, 69, 62] }  // Bbmaj7
+        ];
+
+        // Slide 12 final beat: gently settle into resolved final Fmaj9 cadence
+        if (currentSlide === 11 && currentBeat >= 1) {
+          if (!this.finaleResolved) {
+            this.finaleResolved = true;
+            const cadence = [41, 53, 60, 67, 69, 77];
+            cadence.forEach((m, i) => {
+              this.playNote(m, 0.32, 5.5, when + i * 0.11);
+            });
+            return 3.8;
+          }
+          // Sparse tender final shimmer
+          const endNotes = [60, null, 69, null, 72, null];
+          const n = endNotes[this.stepIdx % endNotes.length];
+          if (n !== null) this.playNote(n, 0.24, 4.8, when);
+          this.stepIdx++;
+          return 1.25;
+        }
+
+        const gBar = goldenBars[this.barIdx % goldenBars.length];
+        const pos = this.stepIdx % 6;
+        if (pos === 0) {
+          this.playNote(gBar.bass, 0.36, 4.6, when);
+        }
+        this.playNote(gBar.arp[pos], 0.34 + (pos === 4 ? 0.06 : 0), 3.8, when);
+
+        // Slide 10 ("Zero regrets"): open airy high fifth shimmer
+        if (currentSlide === 9 && pos === 4) {
+          this.playNote(79, 0.2, 3.6, when + 0.03);
+        }
+        // Slide 11 ("The Paradox"): gentle hourglass high bell shimmer
+        if (currentSlide === 10 && (pos === 2 || pos === 5)) {
+          this.playNote(pos === 2 ? 77 : 81, 0.19, 3.8, when + 0.02);
+        }
+
+        this.stepIdx++;
+        if (this.stepIdx % 6 === 0) this.barIdx++;
+        return currentSlide === 10 ? 1.15 : 0.88;
+      }
+
+      toggleMute() {
+        this.ensureStarted();
+        this.isMuted = !this.isMuted;
+        this.syncLevels();
+      }
+
+      toggleDuck() {
+        this.ensureStarted();
+        this.isDucked = !this.isDucked;
+        this.syncLevels();
+      }
+    }
+
+    const piano = new CinemaPianoEngine();
+
+    function updateAudioUI() {
+      if (!config.music) {
+        els.audioPill.className = 'audio-pill muted';
+        els.audioPillLabel.textContent = 'PIANO OFF';
+        els.pianoStatusHint.textContent = 'Piano désactivé · Active-le pour la scène';
+      } else if (piano.isMuted) {
+        els.audioPill.className = 'audio-pill muted';
+        els.audioPillLabel.textContent = 'PIANO MUTED (M)';
+        els.pianoStatusHint.textContent = 'Muet · Appuie sur M pour reprendre en fondu';
+      } else if (piano.isDucked) {
+        els.audioPill.className = 'audio-pill playing';
+        els.audioPillLabel.textContent = 'PIANO DUCKED (D)';
+        els.pianoStatusHint.textContent = 'Mode Voice Duck actif (35%) · Appuie sur D';
+      } else if (piano.started) {
+        els.audioPill.className = 'audio-pill playing';
+        els.audioPillLabel.textContent = currentSlide === 5 && currentBeat === 0 ? 'PIVOT SILENCE' : 'PIANO LIVE';
+        els.pianoStatusHint.textContent = 'M : Mute doux · D : Voice Duck (35%) · Silence au Pivot';
+      } else {
+        els.audioPill.className = 'audio-pill';
+        els.audioPillLabel.textContent = 'PIANO READY';
+        els.pianoStatusHint.textContent = 'Démarre au premier clic · M : Mute · D : Duck';
+      }
+    }
+
+    // =========================================================================
+    // 2. SYNCHRONIZED PRESENTER CONSOLE (BROADCAST CHANNEL)
+    // =========================================================================
+    const syncChannel = typeof BroadcastChannel !== 'undefined'
+      ? new BroadcastChannel('jeff_presentation_sync_v1')
+      : null;
+
+    function broadcastState() {
+      if (!syncChannel) return;
+      const active = slides[currentSlide];
+      const next = slides[Math.min(slides.length - 1, currentSlide + 1)];
+      const cueData = SCRIPT_CUES[currentSlide];
+      const nextCueData = SCRIPT_CUES[Math.min(SCRIPT_CUES.length - 1, currentSlide + 1)];
+      syncChannel.postMessage({
+        type: 'STATE',
+        slide: currentSlide,
+        totalSlides: slides.length,
+        beat: currentBeat,
+        maxBeats: parseInt(active.dataset.beats || '0', 10),
+        act: active.dataset.act,
+        timeRange: active.dataset.time,
+        cue: active.dataset.cue,
+        title: cueData.title,
+        targetEndSec: cueData.targetEndSec,
+        spoken: cueData.spoken,
+        nextTitle: currentSlide < slides.length - 1 ? nextCueData.title : 'Fin de présentation',
+        nextCue: currentSlide < slides.length - 1 ? next.dataset.cue : 'Saluer & remercier',
+        timerSeconds,
+        music: config.music,
+        isMuted: piano.isMuted,
+        isDucked: piano.isDucked,
+        isBlackout
+      });
+    }
+
+    if (syncChannel) {
+      syncChannel.onmessage = (ev) => {
+        const msg = ev.data || {};
+        if (msg.type === 'CMD') {
+          if (msg.action === 'next') nextStep();
+          else if (msg.action === 'prev') prevStep();
+          else if (msg.action === 'mute') piano.toggleMute();
+          else if (msg.action === 'duck') piano.toggleDuck();
+          else if (msg.action === 'blackout') toggleBlackout();
+          else if (msg.action === 'resetTimer') resetTimer();
+          else if (msg.action === 'requestState') broadcastState();
+          broadcastState();
+        }
+      };
+    }
+
+    function openPresenterConsole() {
+      const w = window.open('', 'JeffPresenterConsole', 'width=980,height=740');
+      if (!w) return;
+      w.document.open();
+      w.document.write(`<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>Console Présentateur — Is it really that great to be young?</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #07080c; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; height: 100vh; display: flex; flex-direction: column; padding: 20px 24px; gap: 16px; }
+  .top { display: grid; grid-template-columns: 1fr auto auto; gap: 18px; align-items: center; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .meta { font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: 0.14em; color: #94a3b8; text-transform: uppercase; }
+  .title { font-size: 22px; font-weight: 700; margin-top: 4px; color: #fef3c7; }
+  .chrono-box { text-align: right; font-family: ui-monospace, monospace; }
+  .chrono { font-size: 34px; font-weight: 700; letter-spacing: 0.04em; color: #fbbf24; }
+  .pace { font-size: 12px; margin-top: 2px; padding: 3px 9px; border-radius: 999px; display: inline-block; }
+  .pace.ok { background: rgba(16,185,129,0.16); color: #6ee7b7; }
+  .pace.warn { background: rgba(245,158,11,0.18); color: #fcd34d; }
+  .pace.bad { background: rgba(244,63,94,0.18); color: #fda4af; }
+  .cue-banner { padding: 11px 16px; border-radius: 10px; background: rgba(251,191,36,0.1); border-left: 3px solid #fbbf24; font-family: ui-monospace, monospace; font-size: 13px; color: #fde68a; display: flex; justify-content: space-between; align-items: center; }
+  .main { flex: 1; display: grid; grid-template-columns: 1.55fr 0.85fr; gap: 18px; min-height: 0; }
+  .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; padding: 20px 22px; overflow-y: auto; }
+  .card h3 { font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.2em; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; }
+  .spoken { font-size: 20px; line-height: 1.6; color: #f1f5f9; }
+  .next-title { font-size: 17px; font-weight: 600; color: #cbd5e1; margin-bottom: 8px; }
+  .next-cue { font-family: ui-monospace, monospace; font-size: 12px; color: #94a3b8; line-height: 1.5; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
+  button { padding: 11px 16px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: #f8fafc; font-weight: 600; cursor: pointer; font-size: 13px; }
+  button.primary { background: linear-gradient(135deg, #fbbf24, #f97316); color: #181006; border: none; flex: 1; }
+  button.active-state { border-color: #fbbf24; color: #fde68a; background: rgba(251,191,36,0.14); }
+</style>
+</head>
+<body>
+  <div class="top">
+    <div>
+      <div class="meta" id="p-meta">SLIDE 01/12 · ACT I · 00:00 — 00:45</div>
+      <div class="title" id="p-title">01 — The Hook</div>
+    </div>
+    <div class="chrono-box">
+      <div class="chrono" id="p-chrono">00:00</div>
+      <div class="pace ok" id="p-pace">En rythme (cible 06:30)</div>
+    </div>
+  </div>
+  <div class="cue-banner">
+    <span id="p-cue">Silence 2s → Click to slash</span>
+    <strong id="p-beat">Beat 0 / 1</strong>
+  </div>
+  <div class="main">
+    <div class="card">
+      <h3>Texte & Repères Oraux</h3>
+      <div class="spoken" id="p-spoken"></div>
+    </div>
+    <div class="card">
+      <h3>Slide Suivante</h3>
+      <div class="next-title" id="p-next-title"></div>
+      <div class="next-cue" id="p-next-cue"></div>
+    </div>
+  </div>
+  <div class="controls">
+    <button onclick="send('prev')">← Reculer</button>
+    <button class="primary" onclick="send('next')">Beat / Slide Suivante →</button>
+    <button id="btn-mute" onclick="send('mute')">Piano Mute (M)</button>
+    <button id="btn-duck" onclick="send('duck')">Voice Duck (D)</button>
+    <button id="btn-blackout" onclick="send('blackout')">Blackout (B)</button>
+    <button onclick="send('resetTimer')">Reset Chrono (R)</button>
+  </div>
+  <script>
+    const ch = new BroadcastChannel('jeff_presentation_sync_v1');
+    function send(action) { ch.postMessage({ type: 'CMD', action }); }
+    function fmt(s) { return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0'); }
+    ch.onmessage = (ev) => {
+      const d = ev.data || {};
+      if (d.type !== 'STATE') return;
+      document.getElementById('p-meta').textContent = 'SLIDE ' + String(d.slide+1).padStart(2,'0') + '/' + String(d.totalSlides).padStart(2,'0') + ' · ' + d.act + ' · ' + d.timeRange;
+      document.getElementById('p-title').textContent = d.title;
+      document.getElementById('p-chrono').textContent = fmt(d.timerSeconds);
+      document.getElementById('p-cue').textContent = d.cue;
+      document.getElementById('p-beat').textContent = 'Beat ' + d.beat + ' / ' + d.maxBeats;
+      document.getElementById('p-spoken').textContent = d.spoken;
+      document.getElementById('p-next-title').textContent = d.nextTitle;
+      document.getElementById('p-next-cue').textContent = d.nextCue;
+
+      const paceEl = document.getElementById('p-pace');
+      const diff = d.timerSeconds - d.targetEndSec;
+      if (d.timerSeconds === 0) {
+        paceEl.className = 'pace ok';
+        paceEl.textContent = 'Prêt · Cible 06:30';
+      } else if (Math.abs(diff) <= 15) {
+        paceEl.className = 'pace ok';
+        paceEl.textContent = 'Dans le tempo (cible slide ' + fmt(d.targetEndSec) + ')';
+      } else if (Math.abs(diff) <= 35) {
+        paceEl.className = 'pace warn';
+        paceEl.textContent = (diff > 0 ? '+' : '') + diff + 's vs cible slide';
+      } else {
+        paceEl.className = 'pace bad';
+        paceEl.textContent = (diff > 0 ? 'En retard +' : 'En avance ') + diff + 's';
+      }
+
+      document.getElementById('btn-mute').classList.toggle('active-state', !!d.isMuted);
+      document.getElementById('btn-duck').classList.toggle('active-state', !!d.isDucked);
+      document.getElementById('btn-blackout').classList.toggle('active-state', !!d.isBlackout);
+    };
+    ch.postMessage({ type: 'CMD', action: 'requestState' });
+  <\/script>
+</body>
+</html>`);
+      w.document.close();
+    }
+
+    // =========================================================================
+    // 3. DECK ENGINE, CURTAIN, DIP-TO-BLACK & STUDIO CONFIG
+    // =========================================================================
+    slides.forEach((_, idx) => {
+      const b = document.createElement('button');
+      b.className = 'jump-btn';
+      b.textContent = pad2(idx + 1);
+      b.onclick = () => {
+        piano.ensureStarted();
+        goToSlide(idx, 0);
+      };
+      els.jumpGrid.appendChild(b);
+    });
+
+    function saveConfig() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+    }
+
+    function applyConfig() {
+      document.body.dataset.theme = config.theme;
+      document.body.classList.toggle('letterbox-on', config.letterbox && config.theme === 'cinema');
+      document.body.classList.toggle('no-grain', !config.grain);
+      document.body.classList.toggle('no-memes', !config.memes);
+      document.body.classList.toggle('no-motion', !config.motion);
+      document.body.classList.toggle('show-hud', config.hud);
+
+      document.querySelectorAll('.theme-card').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.setTheme === config.theme);
+      });
+
+      els.optLetterbox.checked = config.letterbox;
+      els.optGrain.checked = config.grain;
+      els.optMemes.checked = config.memes;
+      els.optMotion.checked = config.motion;
+      els.optHud.checked = config.hud;
+      els.optMusic.checked = config.music;
+      const pct = Math.round(config.musicVolume * 100);
+      els.optVolume.value = pct;
+      els.volPct.textContent = `${pct}%`;
+
+      piano.syncLevels();
+      updateAudioUI();
+      saveConfig();
+      broadcastState();
+    }
+
+    function updateSlideVisualState() {
+      slides.forEach((s, idx) => {
+        s.classList.toggle('active', idx === currentSlide);
+        const beats = s.querySelectorAll('.beat');
+        beats.forEach(b => {
+          const bNum = parseInt(b.dataset.beat, 10);
+          b.classList.toggle('revealed', idx === currentSlide && currentBeat >= bNum);
+        });
+      });
+
+      // Slide-specific micro-choreography
+      const s1Done = currentSlide === 0 && currentBeat >= 1;
+      document.getElementById('s1-slash').classList.toggle('drawn', s1Done);
+      document.getElementById('s1-quote').classList.toggle('crossed', s1Done);
+      document.getElementById('s1-glow').classList.toggle('lit', s1Done);
+
+      document.getElementById('s6-halo').classList.toggle('expanded', currentSlide === 5 && currentBeat >= 1);
+
+      const s7Done = currentSlide === 6 && currentBeat >= 1;
+      document.getElementById('s7-gold-line').classList.toggle('drawn', s7Done);
+      document.getElementById('s7-failure').classList.toggle('struck', s7Done);
+
+      const active = slides[currentSlide];
+      const maxBeats = parseInt(active.dataset.beats || '0', 10);
+      const curStr = pad2(currentSlide + 1);
+      const totStr = pad2(slides.length);
+
+      els.a24Act.textContent = active.dataset.act;
+      els.a24Time.textContent = active.dataset.time;
+      els.a24Counter.textContent = `${curStr} / ${totStr}`;
+      els.hudSlide.textContent = `${curStr}/${totStr}`;
+      els.hudBeat.textContent = `Beat ${currentBeat}/${maxBeats}`;
+      els.hudCue.textContent = active.dataset.cue;
+      els.progressBar.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+
+      els.jumpGrid.querySelectorAll('.jump-btn').forEach((b, i) => {
+        b.classList.toggle('active', i === currentSlide);
+      });
+
+      const showDust = currentSlide >= 6 && config.motion && !document.body.classList.contains('instant-mode');
+      els.goldenDustCanvas.classList.toggle('visible', showDust);
+
+      piano.onSlideChange(currentSlide, currentBeat);
+      updateAudioUI();
+      window.__renderEmbers?.();
+      broadcastState();
+    }
+
+    function goToSlide(idx, beat = 0) {
+      const target = Math.max(0, Math.min(slides.length - 1, idx));
+      const instant = document.body.classList.contains('instant-mode');
+      const crossingMajorAct = !instant && ((currentSlide === 4 && target === 5) || (currentSlide === 5 && target === 6));
+
+      if (crossingMajorAct && !isTransitioning) {
+        isTransitioning = true;
+        els.actVeil.classList.add('dip');
+        setTimeout(() => {
+          currentSlide = target;
+          const maxBeats = parseInt(slides[currentSlide].dataset.beats || '0', 10);
+          currentBeat = Math.max(0, Math.min(maxBeats, beat));
+          updateSlideVisualState();
+          els.actVeil.classList.remove('dip');
+          isTransitioning = false;
+        }, 220);
+        return;
+      }
+
+      currentSlide = target;
+      const maxBeats = parseInt(slides[currentSlide].dataset.beats || '0', 10);
+      currentBeat = Math.max(0, Math.min(maxBeats, beat));
+      updateSlideVisualState();
+    }
+
+    function liftCurtainAndStart() {
+      if (!document.body.classList.contains('curtain-open')) return;
+      document.body.classList.remove('curtain-open');
+      resetTimer();
+      startTimerIfNeeded();
+      goToSlide(0, 0);
+      piano.ensureStarted();
+      piano.syncLevels();
+    }
+
+    function startImmersivePresentation() {
+      els.drawer.classList.remove('open');
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.();
+      }
+      if (config.curtainOnPresent) {
+        document.body.classList.add('curtain-open');
+      } else {
+        piano.ensureStarted();
+        startTimerIfNeeded();
+      }
+      resetCursorIdleTimer();
+    }
+
+    function toggleBlackout() {
+      isBlackout = !isBlackout;
+      els.actVeil.classList.toggle('blackout', isBlackout);
+      piano.syncLevels();
+      broadcastState();
+    }
+
+    function nextStep() {
+      if (isTransitioning) return;
+      if (document.body.classList.contains('curtain-open')) {
+        liftCurtainAndStart();
+        return;
+      }
+      piano.ensureStarted();
+      startTimerIfNeeded();
+      const maxBeats = parseInt(slides[currentSlide].dataset.beats || '0', 10);
+      if (currentBeat < maxBeats) {
+        currentBeat++;
+        updateSlideVisualState();
+      } else if (currentSlide < slides.length - 1) {
+        goToSlide(currentSlide + 1, 0);
+      }
+    }
+
+    function prevStep() {
+      if (isTransitioning) return;
+      if (currentBeat > 0) {
+        currentBeat--;
+        updateSlideVisualState();
+      } else if (currentSlide > 0) {
+        const prevMax = parseInt(slides[currentSlide - 1].dataset.beats || '0', 10);
+        goToSlide(currentSlide - 1, prevMax);
+      }
+    }
+
+    function startTimerIfNeeded() {
+      if (timerInterval) return;
+      timerInterval = setInterval(() => {
+        timerSeconds++;
+        els.hudTimer.textContent = formatTime(timerSeconds);
+        broadcastState();
+      }, 1000);
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerSeconds = 0;
+      els.hudTimer.textContent = '00:00';
+      broadcastState();
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.();
+        els.drawer.classList.remove('open');
+      } else {
+        document.exitFullscreen?.();
+      }
+    }
+
+    function resetCursorIdleTimer() {
+      document.body.classList.remove('cursor-hidden');
+      clearTimeout(cursorTimer);
+      if (document.body.classList.contains('presenting') || document.body.classList.contains('curtain-open')) {
+        cursorTimer = setTimeout(() => {
+          document.body.classList.add('cursor-hidden');
+        }, 1600);
+      }
+    }
+
+    document.addEventListener('mousemove', resetCursorIdleTimer);
+    document.addEventListener('fullscreenchange', () => {
+      const isFs = !!document.fullscreenElement;
+      document.body.classList.toggle('presenting', isFs);
+      if (!isFs) {
+        document.body.classList.remove('cursor-hidden');
+        clearTimeout(cursorTimer);
+      } else {
+        resetCursorIdleTimer();
+      }
+    });
+
+    // Subtle Living Ember Particles on Slide 06 (index 5)
+    (function initEmberCanvas() {
+      const canvas = document.getElementById('ember-canvas');
+      const ctx = canvas.getContext('2d');
+      let w = 0, h = 0;
+      const motes = Array.from({ length: 30 }, () => ({
+        angle: Math.random() * Math.PI * 2,
+        radius: 22 + Math.random() * 145,
+        speed: 0.002 + Math.random() * 0.004,
+        size: 0.8 + Math.random() * 1.8,
+        alpha: 0.16 + Math.random() * 0.55
+      }));
+
+      function resize() {
+        w = canvas.width = canvas.parentElement.clientWidth || window.innerWidth;
+        h = canvas.height = canvas.parentElement.clientHeight || window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      function renderMotes() {
+        ctx.clearRect(0, 0, w, h);
+        if (currentSlide === 5) {
+          const cx = w / 2;
+          const cy = h / 2;
+          const spread = currentBeat >= 1 ? 1.8 : 1;
+          for (const m of motes) {
+            m.angle += m.speed;
+            m.radius += Math.sin(m.angle * 2) * 0.15;
+            const x = cx + Math.cos(m.angle) * m.radius * spread;
+            const y = cy + Math.sin(m.angle) * m.radius * 0.72 * spread;
+            ctx.beginPath();
+            ctx.arc(x, y, m.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(251, 191, 36, ${m.alpha * 0.68})`;
+            ctx.fill();
+          }
+        }
+      }
+
+      function draw() {
+        renderMotes();
+        if (!document.body.classList.contains('instant-mode')) {
+          requestAnimationFrame(draw);
+        }
+      }
+      window.__renderEmbers = renderMotes;
+      renderMotes();
+      draw();
+    })();
+
+    // Subtle Golden Hour Atmospheric Dust Canvas (Slides 07-12)
+    (function initGoldenDustCanvas() {
+      const canvas = els.goldenDustCanvas;
+      const ctx = canvas.getContext('2d');
+      let w = 0, h = 0;
+      const dust = Array.from({ length: 16 }, () => ({
+        x: Math.random(),
+        y: Math.random(),
+        vx: 0.00012 + Math.random() * 0.00018,
+        vy: -(0.00008 + Math.random() * 0.0002),
+        r: 1.0 + Math.random() * 1.6,
+        a: 0.08 + Math.random() * 0.14
+      }));
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      function drawDust() {
+        ctx.clearRect(0, 0, w, h);
+        if (currentSlide >= 6 && config.motion && !document.body.classList.contains('instant-mode')) {
+          for (const d of dust) {
+            d.x = (d.x + d.vx) % 1;
+            d.y = (d.y + d.vy + 1) % 1;
+            ctx.beginPath();
+            ctx.arc(d.x * w, d.y * h, d.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(254, 243, 199, ${d.a})`;
+            ctx.fill();
+          }
+        }
+        if (!document.body.classList.contains('instant-mode')) {
+          requestAnimationFrame(drawDust);
+        }
+      }
+      drawDust();
+    })();
+
+    // Studio & Audio UI listeners
+    els.studioBtn.onclick = (e) => { e.stopPropagation(); els.drawer.classList.toggle('open'); };
+    els.closeStudio.onclick = () => els.drawer.classList.remove('open');
+    els.btnImmersive.onclick = () => startImmersivePresentation();
+    els.btnPresenter.onclick = () => openPresenterConsole();
+    els.audioPill.onclick = (e) => { e.stopPropagation(); piano.toggleMute(); };
+    els.curtain.onclick = () => liftCurtainAndStart();
+
+    document.querySelectorAll('.theme-card').forEach(btn => {
+      btn.onclick = () => {
+        config.theme = btn.dataset.setTheme;
+        applyConfig();
+      };
+    });
+
+    els.optLetterbox.onchange = () => { config.letterbox = els.optLetterbox.checked; applyConfig(); };
+    els.optGrain.onchange = () => { config.grain = els.optGrain.checked; applyConfig(); };
+    els.optMemes.onchange = () => { config.memes = els.optMemes.checked; applyConfig(); };
+    els.optMotion.onchange = () => { config.motion = els.optMotion.checked; applyConfig(); };
+    els.optHud.onchange = () => { config.hud = els.optHud.checked; applyConfig(); };
+    els.optMusic.onchange = () => {
+      config.music = els.optMusic.checked;
+      if (config.music) piano.ensureStarted();
+      applyConfig();
+    };
+    els.optVolume.oninput = () => {
+      config.musicVolume = Math.max(0, Math.min(1, parseInt(els.optVolume.value, 10) / 100));
+      els.volPct.textContent = `${els.optVolume.value}%`;
+      piano.syncLevels();
+      saveConfig();
+    };
+
+    // Keyboard, Wireless Clicker & Touch Swipe navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter' || e.key === 'PageDown') {
+        if (els.drawer.classList.contains('open')) return;
+        e.preventDefault();
+        nextStep();
+      } else if (e.key === 'ArrowLeft' || e.key === 'Backspace' || e.key === 'PageUp') {
+        if (els.drawer.classList.contains('open')) return;
+        e.preventDefault();
+        prevStep();
+      } else if (e.key.toLowerCase() === 's') {
+        els.drawer.classList.toggle('open');
+      } else if (e.key.toLowerCase() === 'p') {
+        startImmersivePresentation();
+      } else if (e.key.toLowerCase() === 'o') {
+        openPresenterConsole();
+      } else if (e.key.toLowerCase() === 'b') {
+        toggleBlackout();
+      } else if (e.key.toLowerCase() === 'm') {
+        piano.toggleMute();
+      } else if (e.key.toLowerCase() === 'd') {
+        piano.toggleDuck();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      } else if (e.key.toLowerCase() === 'n') {
+        config.hud = !config.hud;
+        applyConfig();
+      } else if (e.key.toLowerCase() === 'r') {
+        resetTimer();
+      } else if (e.key === 'Escape') {
+        els.drawer.classList.remove('open');
+        if (isBlackout) toggleBlackout();
+      }
+    });
+
+    let touchStartX = 0, touchStartY = 0;
+    document.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+    document.addEventListener('touchend', (e) => {
+      if (els.drawer.classList.contains('open') || e.changedTouches.length !== 1) return;
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy)) {
+        if (dx < 0) nextStep();
+        else prevStep();
+      }
+    }, { passive: true });
+
+    document.getElementById('slides').addEventListener('click', (e) => {
+      if (els.drawer.classList.contains('open')) {
+        els.drawer.classList.remove('open');
+        return;
+      }
+      if (e.clientX < window.innerWidth * 0.22) {
+        prevStep();
+      } else {
+        nextStep();
+      }
+    });
+
+    // URL query helper for direct inspection (?slide=0&beat=1&theme=a24&instant=1&studio=1&curtain=1)
+    if (params.has('theme')) config.theme = params.get('theme');
+    if (params.get('curtain') === '1') {
+      document.body.classList.add('curtain-open');
+    }
+    if (params.get('studio') === '1') {
+      els.drawer.classList.add('open');
+    }
+    applyConfig();
+    goToSlide(parseInt(params.get('slide') || '0', 10), parseInt(params.get('beat') || '0', 10));
+  </script>
+</body>
+</html>
